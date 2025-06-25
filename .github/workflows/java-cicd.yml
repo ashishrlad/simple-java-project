@@ -104,9 +104,9 @@ jobs:
           git clone https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
           git config --global user.name "ashishrlad"
           git config --global user.email "ashishrlad@gmail.com"
-          #cd config_repo_samplejava/manifest-repo/main
-          sed -i "s|image:.*|image: ${IMAGE_NAME}|" config_repo_samplejava/manifest-repo/main/guestbookdeployment.yml
-          cat config_repo_samplejava/manifest-repo/main/guestbookdeployment.yml
+          cd config_repo_samplejava/manifest-repo/main
+          sed -i "s|image:.*|image: ${IMAGE_NAME}|" guestbookdeployment.yml
+          cat guestbookdeployment.yml
           git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
           git config --global init.defaultBranch ${{ github.ref_name }}
           git add . 
