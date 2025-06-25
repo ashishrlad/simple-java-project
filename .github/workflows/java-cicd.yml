@@ -111,5 +111,4 @@ jobs:
           git config --global init.defaultBranch ${{ github.ref_name }}
           git add . 
           git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
-          git push origin main 
-		  
+          git push origin main
