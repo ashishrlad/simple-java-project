@@ -9,8 +9,8 @@ on:
 env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   API_TOKEN_GITHUB: ${{ secrets.GH_PAT_DEST_REPO1 }}
-  #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.ref_name }}-simple-java-app:${{ github.run_id }}
+  
 jobs:
   java-ci:
     runs-on: ubuntu-latest
@@ -42,14 +42,13 @@ jobs:
       # Docker Build
       - name: Build Docker Image
         run: |
-          echo -e "FROM eclipse-temurin:17\nCOPY target/*.jar /app.jar\nENTRYPOINT [\"java\", \"-jar\", \"/app.jar\"]" > Dockerfile
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.ref_name }}-java-app:${{ github.run_id }} .
+           docker build -t ${IMAGE_NAME} .
 
       # Trivy Security Scan
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/${{ github.ref_name }}-java-app:${{ github.run_id }}'
+          image-ref: '${{ env.IMAGE_NAME }}'
           format: 'table'
           exit-code: '0'
           ignore-unfixed: true
@@ -73,7 +72,7 @@ jobs:
       - name: Docker Push
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.ref_name }}-java-app:${{ github.run_id }}
+          docker push ${IMAGE_NAME}
 
   deploy-prod:
     needs: java-ci    
@@ -85,13 +84,13 @@ jobs:
         if: github.ref_name != 'main' 
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.ref_name }}-java-app:${{ github.run_id }}
+          docker pull ${IMAGE_NAME}
     
       - name: Push Docker Image to DockerHub
         if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.ref_name }}-java-app:${{ github.run_id }}    
+          docker pull ${IMAGE_NAME}
       - name: Checkout private tools
         uses: actions/checkout@v4
         with:
@@ -103,13 +102,12 @@ jobs:
       - name: "Push Updated Image Tag" 
         run: |
           git clone https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
-          #git init
           git config --global user.name "ashishrlad"
           git config --global user.email "ashishrlad@gmail.com"
           ls -lha
           pwd
           cd config_repo_samplejava/manifest-repo/main
-          sed -i "s|image:.*|image: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.ref_name }}-java-app:${{ github.run_id }}|" guestbookdeployment.yml
+          sed -i "s|image:.*|image: ${IMAGE_NAME}|" guestbookdeployment.yml
           pwd
           ls -lah
           cat guestbookdeployment.yml
