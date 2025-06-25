@@ -1,0 +1,120 @@
+name: Java CI Pipeline (Containerized)
+
+on:
+  push:
+    branches: [main, dev, stage, prod]
+  workflow_dispatch:
+    #environment: production
+
+env:
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  API_TOKEN_GITHUB: ${{ secrets.GH_PAT_DEST_REPO1 }}
+  #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  java-ci:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'prod' && 'production' || '' }}
+
+    steps:
+      # Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # SonarQube Scan
+      #- name: SonarQube Scan
+        #run: |
+          #mvn clean verify sonar:sonar \
+            #-Dsonar.projectKey=${{ vars.PROJECT_KEY }} \
+            #-Dsonar.projectName=${{ vars.PROJECT_NAME }} \
+            #-Dsonar.host.url=http://13.233.71.33:9000 \
+            #-Dsonar.token=${{ secrets.SONAR_TOKEN }}
+
+      # Build Java with Maven in container
+      - name: Build with Maven
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/app \
+            -w /app \
+            maven:3.9.4-eclipse-temurin-17 \
+            mvn clean package
+
+      # Docker Build
+      - name: Build Docker Image
+        run: |
+          echo -e "FROM eclipse-temurin:17\nCOPY target/*.jar /app.jar\nENTRYPOINT [\"java\", \"-jar\", \"/app.jar\"]" > Dockerfile
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.ref_name }}-java-app:${{ github.run_id }} .
+
+      # Trivy Security Scan
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/${{ github.ref_name }}-java-app:${{ github.run_id }}'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+          output: 'trivy-report.txt'
+      # Send Email Report
+      #- name: Email Trivy Report
+        #uses: dawidd6/action-send-mail@v3
+        #with:
+          #server_address: smtp.gmail.com
+          #server_port: 587
+          #username: ${{ secrets.MAIL_USERNAME }}
+          #password: ${{ secrets.MAIL_PASSWORD }}
+          #subject: "Trivy Report - ${{ github.repository }} (${{ github.ref_name }})"
+          #body: "Attached Trivy scan report for image built from ${{ github.ref_name }}."
+          #to: ashishrlad@gmail.com
+          #from: ${{ secrets.MAIL_USERNAME }}
+          #attachments: trivy-report.txt
+      
+       # docker push image to dockerhub
+      - name: Docker Push
+        run: |
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.ref_name }}-java-app:${{ github.run_id }}
+
+  deploy-prod:
+    needs: java-ci    
+    runs-on: ubuntu-latest
+    environment: production   # This enforces manual approval
+    steps:
+      # Pull Image
+      - name: Docker Push
+        if: github.ref_name != 'main' 
+        run: |
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.ref_name }}-java-app:${{ github.run_id }}
+    
+      - name: Push Docker Image to DockerHub
+        if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+        run: |
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.ref_name }}-java-app:${{ github.run_id }}    
+      - name: Checkout private tools
+        uses: actions/checkout@v4
+        with:
+            repository: ashishrlad/config_repo_samplejava
+            token: ${{ secrets.GH_PAT_DEST_REPO1 }} # `GH_PAT` is a secret that contains your PAT
+            path: manifest-repo/main
+            persist-credentials: true
+
+      - name: "Push Updated Image Tag" 
+        run: |
+          git clone https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
+          #git init
+          git config --global user.name "ashishrlad"
+          git config --global user.email "ashishrlad@gmail.com"
+          ls -lha
+          pwd
+          cd config_repo_samplejava/manifest-repo/main
+          sed -i "s|image:.*|image: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.ref_name }}-java-app:${{ github.run_id }}|" guestbookdeployment.yml
+          pwd
+          ls -lah
+          cat guestbookdeployment.yml
+          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
+          git config --global init.defaultBranch ${{ github.ref_name }}
+          git add . #main/guestbookdeployment.yml
+          git commit -m "Update image tag ${{ github.ref_name }}"
+          git push origin main 
