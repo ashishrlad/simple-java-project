@@ -152,7 +152,7 @@ jobs:
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
-           git commit -m "Updated image for ${{ matrix.service }} on ${{ github.ref_name }"
+           git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin main
  deploy-MS1-dev:
      if: github.ref == 'refs/heads/dev'
@@ -257,7 +257,7 @@ jobs:
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
-           git commit -m "Updated image for ${{ matrix.service }} on ${{ github.ref_name }"
+           git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin main
  microservice-two-job-ci:
     if: contains(github.event.head_commit.message, 'microservice-two') || 
