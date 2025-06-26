@@ -66,11 +66,7 @@ jobs:
           CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep "^${{ matrix.service }}/" || true)
           echo "changed=$CHANGED" >> $GITHUB_OUTPUT
 
-      - name: Skip if no change in ${{ matrix.service }}
-        if: steps.detect-changes.outputs.changed == ''
-        run: echo "No changes in ${{ matrix.service }}"
-
-      # SonarQube Scan
+     # SonarQube Scan
       #- name: SonarQube Scan
         #if: steps.detect-changes.outputs.changed != ''
 		#run: |
@@ -311,9 +307,9 @@ jobs:
           CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep "^${{ matrix.service }}/" || true)
           echo "changed=$CHANGED" >> $GITHUB_OUTPUT
 
-      - name: Skip if no change in ${{ matrix.service }}
-        if: steps.detect-changes.outputs.changed == ''
-        run: echo "No changes in ${{ matrix.service }}"
+     # - name: Skip if no change in ${{ matrix.service }}
+       # if: steps.detect-changes.outputs.changed == ''
+        #run: echo "No changes in ${{ matrix.service }}"
 
       # SonarQube Scan
       #- name: SonarQube Scan
