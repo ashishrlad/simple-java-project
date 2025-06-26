@@ -52,7 +52,7 @@ jobs:
       - name: Sparse checkout microservice-one
         uses: actions/checkout@v4
         with:
-          path: microservice-one
+          path: .
           sparse-checkout: |
             microservice-one/
           sparse-checkout-cone-mode: true
