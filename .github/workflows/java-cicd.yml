@@ -82,14 +82,6 @@ jobs:
             #-Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
       # Build Java with Maven in container
-      - name: Build microservice-one
-        run: |
-          pwd 
-          ls -lah
-          cd microservice-one/
-          pwd 
-          ls -lah
-          ./mvnw clean install
       - name: Build with Maven
         #if: steps.detect-changes.outputs.changed != ''
         run: |
