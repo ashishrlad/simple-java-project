@@ -52,13 +52,22 @@ jobs:
       - name: Checkout only microservice-one
         uses: actions/checkout@v4
         with:
-          repository: ashishrlad/simple-java-project    # or omit if working in same repo
-          token: ${{ secrets.GITHUB_TOKEN }}
-          path: .                                        # or 'microservice-one' if you want it in a subdir
-          sparse-checkout: |
-              microservice-one/
-          sparse-checkout-cone-mode: true
-          fetch-depth: 1
+         repository: ashishrlad/simple-java-project
+         token: ${{ secrets.GH_PAT_DEST_REPO1 }}
+         path: .
+         sparse-checkout: microservice-one/
+         sparse-checkout-cone-mode: true
+         fetch-depth: 1
+         ssh-strict: true
+         ssh-user: git
+         persist-credentials: true
+         clean: true
+         fetch-tags: false
+         show-progress: true
+         lfs: false
+         submodules: false
+         set-safe-directory: true
+
         #with:
           #fetch-depth: 0
 
