@@ -115,7 +115,7 @@ jobs:
           git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
           git push origin main
 
-  deploy-prod:
+  deploy-dev:
     needs: java-ci    
     runs-on: ubuntu-latest
     environment: dev   # This enforces manual approval
