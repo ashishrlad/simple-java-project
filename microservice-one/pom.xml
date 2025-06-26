@@ -49,7 +49,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>3.4.0</version>
         <configuration>
-          <warSourceDirectory>microservice-one/src/main/webapp</warSourceDirectory>
+          <warSourceDirectory>src/main/webapp</warSourceDirectory>
         </configuration>
       </plugin>
 
