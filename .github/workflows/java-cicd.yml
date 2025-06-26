@@ -13,8 +13,6 @@ env:
 jobs:
   java-ci:
     runs-on: ubuntu-latest
-    #environment: ${{ github.ref_name == 'prod' && 'production' || '' }}
-
     steps:
       # Checkout code
       - name: Checkout Code
