@@ -86,12 +86,14 @@ jobs:
         run: |
           pwd 
           ls -lah
-          cd microservice-one
+          cd microservice-one/
+          pwd 
+          ls -lah
           ./mvnw clean install
       - name: Build with Maven
         #if: steps.detect-changes.outputs.changed != ''
         run: |
-          cd microservice-one
+          cd microservice-one/
           docker run --rm \
             -v ${{ github.workspace }}:/app \
             -w /app \
