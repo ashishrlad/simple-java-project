@@ -79,15 +79,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: production   # This enforces manual approval
     steps:
-      # Pull Image
-      ##- name: Docker Push
-        ##if: github.ref_name != 'main' 
-        ##run: |
-          ##echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-          ##docker pull ${IMAGE_NAME}
-    
       - name: Pull Docker Image from DockerHub for ${{ github.ref_name }} git branch
-        if: github.ref == 'refs/heads/main'
+        if: github.ref_name  == 'refs/heads/main'
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           docker pull ${IMAGE_NAME}
@@ -104,30 +97,31 @@ jobs:
           #git clone https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
           git config --global user.name "ashishrlad"
           git config --global user.email "ashishrlad@gmail.com"
-          pwd 
-          ls -lah
-          cd manifest-repo/main/manifest-repo/main
+          #pwd 
+          #ls -lah
+          #cd manifest-repo/main/manifest-repo/main
           pwd
           ls -lah
-          sed -i "s|image:.*|image: ${IMAGE_NAME}|" guestbookdeployment.yml
-          cat guestbookdeployment.yml
+          sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/main/manifest-repo/main/guestbookdeployment.yml
+          cat manifest-repo/main/manifest-repo/main/guestbookdeployment.yml
       - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
         run: |
           pwd
-          ls -lah
+          #ls -lah
           cd manifest-repo/main/manifest-repo
           git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
           git config --global init.defaultBranch ${{ github.ref_name }}
           git add . 
           git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
           git push origin main
-  deploy-dev:
+
+  deploy-prod:
     needs: java-ci    
     runs-on: ubuntu-latest
     environment: dev   # This enforces manual approval
     steps:
       - name: Pull Docker Image from DockerHub for ${{ github.ref_name }} git branch
-        if: github.ref == 'refs/heads/dev'
+        if: github.ref_name == 'dev'
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           docker pull ${IMAGE_NAME}
@@ -142,19 +136,22 @@ jobs:
       - name: "Updated Image Tag for ${{ github.ref_name }} git branch" 
         run: |
           #git clone https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
-          #git config --global user.name "ashishrlad"
-          #git config --global user.email "ashishrlad@gmail.com"
-          pwd 
-          ls -lah
-          cd manifest-repo/main/manifest-repo/main
+          git config --global user.name "ashishrlad"
+          git config --global user.email "ashishrlad@gmail.com"
+          #pwd 
+          #ls -lah
+          #cd manifest-repo/main/manifest-repo/main
           pwd
           ls -lah
-          sed -i "s|image:.*|image: ${IMAGE_NAME}|" guestbookdeployment.yml
-          cat guestbookdeployment.yml
+          sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/main/manifest-repo/main/guestbookdeployment.yml
+          cat manifest-repo/main/manifest-repo/main/guestbookdeployment.yml
       - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
         run: |
+          pwd
+          #ls -lah
+          cd manifest-repo/main/manifest-repo
           git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
           git config --global init.defaultBranch ${{ github.ref_name }}
           git add . 
           git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
-          git push origin dev
+          git push origin main
