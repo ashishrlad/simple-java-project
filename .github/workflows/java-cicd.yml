@@ -126,11 +126,11 @@ jobs:
       run: |
           git config --global user.name "ashishrlad"
           git config --global user.email "ashishrlad@gmail.com"
-          cd manifest-repo
+          cd manifest-repo/manifest-repo
           ls -lah
           pwd
-          sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }}|" manifest-repo/main/manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
-          cat manifest-repo/main/manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
+          sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }}|" manifest-repo/manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
+          cat manifest-repo/manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
 
     - name: Push Updated Manifest
       if: steps.check_file.outputs.missing == 'false'
