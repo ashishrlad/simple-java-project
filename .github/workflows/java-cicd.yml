@@ -53,7 +53,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ashishrlad/simple-java-project    # or omit if working in same repo
-          token: ${{ secrets.GITHUGH_PAT_DEST_REPO1 }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           path: .                                        # or 'microservice-one' if you want it in a subdir
           sparse-checkout: |
               microservice-one/
