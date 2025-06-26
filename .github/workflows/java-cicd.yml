@@ -48,23 +48,9 @@ jobs:
     if: needs.check_changes.outputs.microservice_one_changed == 'true'
 
     runs-on: ubuntu-latest
-    #strategy:
-      #matrix:
-        #service: [microservice-one, microservice-two]
-
-    #outputs:
-     #service_changed-${{ matrix.service }}: ${{ steps.detect-changes.outputs.changed }}
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Detect changes in ${{ matrix.service }}
-        id: detect-changes
-        run: |
-          git fetch origin ${{ github.event.before }}
-          CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep "^${{ matrix.service }}/" || true)
-          echo "changed=$CHANGED" >> $GITHUB_OUTPUT
 
      # SonarQube Scan
       #- name: SonarQube Scan
@@ -146,10 +132,6 @@ jobs:
        matrix:
          service: [microservice-one, microservice-two]
      steps:
-       - name: Download image name artifact
-         uses: actions/download-artifact@v3
-         with:
-           name: image-name-${{ matrix.service }}
        - name: Read image name
          id: read_image
          run: |
