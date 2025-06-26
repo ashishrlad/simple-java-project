@@ -4,18 +4,16 @@ on:
   push:
     branches: [main, dev, stage, prod]
   workflow_dispatch:
-    #environment: production
-
+    
 env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   API_TOKEN_GITHUB: ${{ secrets.GH_PAT_DEST_REPO1 }}
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/simple-java-app:${{ github.ref_name }}-${{ github.run_id }}
-  #IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/simple-java-app/${{ github.ref_name }}:${{ github.run_id }}
-  
+   
 jobs:
   java-ci:
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name == 'prod' && 'production' || '' }}
+    #environment: ${{ github.ref_name == 'prod' && 'production' || '' }}
 
     steps:
       # Checkout code
@@ -70,7 +68,7 @@ jobs:
           #attachments: trivy-report.txt
       
        # docker push image to dockerhub
-      - name: Docker Push
+      - name: Docker Push to docker hub Repository
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           docker push ${IMAGE_NAME}
@@ -85,7 +83,7 @@ jobs:
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           docker pull ${IMAGE_NAME}
-      - name: Checkout private tools
+      - name: Checkout menifeast repository
         uses: actions/checkout@v4
         with:
             repository: ashishrlad/config_repo_samplejava
