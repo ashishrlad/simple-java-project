@@ -102,8 +102,8 @@ jobs:
       - name: "Updated Image Tag for ${{ github.ref_name }} git branch" 
         run: |
           #git clone https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
-          #git config --global user.name "ashishrlad"
-          #git config --global user.email "ashishrlad@gmail.com"
+          git config --global user.name "ashishrlad"
+          git config --global user.email "ashishrlad@gmail.com"
           pwd 
           ls -lah
           cd manifest-repo/main/manifest-repo/main
