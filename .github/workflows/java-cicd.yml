@@ -18,9 +18,9 @@ jobs:
         contains(join(github.event.commits.*.modified, ','), 'microservice-one')
 
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        service: [microservice-one, microservice-two]
+    #strategy:
+      #matrix:
+        #service: [microservice-one, microservice-two]
 
     #outputs:
      #service_changed-${{ matrix.service }}: ${{ steps.detect-changes.outputs.changed }}
