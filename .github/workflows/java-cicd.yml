@@ -267,8 +267,8 @@ jobs:
       matrix:
         service: [microservice-one, microservice-two]
 
-    outputs:
-      service_changed-${{ matrix.service }}: ${{ steps.detect-changes.outputs.changed }}
+    #outputs:
+      #service_changed-${{ matrix.service }}: ${{ steps.detect-changes.outputs.changed }}
 
     steps:
       - name: Checkout Code
@@ -396,7 +396,7 @@ jobs:
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
-           git commit -m "Updated image for ${{ matrix.service }} on ${{ github.ref_name }"
+           git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin main
 
  deploy-MS2-dev:
@@ -502,5 +502,5 @@ jobs:
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
-           git commit -m "Updated image for ${{ matrix.service }} on ${{ github.ref_name }"
+           git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin main
