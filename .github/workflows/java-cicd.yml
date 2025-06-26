@@ -115,6 +115,7 @@ jobs:
         run: |
           pwd
           ls -lah
+          cd manifest-repo/main/manifest-repo
           git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
           git config --global init.defaultBranch ${{ github.ref_name }}
           git add . 
