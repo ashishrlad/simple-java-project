@@ -82,9 +82,14 @@ jobs:
             #-Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
       # Build Java with Maven in container
-      - name: Build with Maven
-        if: steps.detect-changes.outputs.changed != ''
+      - name: Build microservice-one
         run: |
+          cd microservice-one
+          ./mvnw clean install
+      - name: Build with Maven
+        #if: steps.detect-changes.outputs.changed != ''
+        run: |
+          cd microservice-one
           docker run --rm \
             -v ${{ github.workspace }}:/app \
             -w /app \
@@ -93,7 +98,7 @@ jobs:
 
       # Docker Build
       - name: Build Docker Image
-        if: steps.detect-changes.outputs.changed != ''
+        #if: steps.detect-changes.outputs.changed != ''
         run: |
            IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:${{ github.ref_name }}-${{ github.run_id }}
            echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
@@ -101,7 +106,7 @@ jobs:
 
       # Trivy Security Scan
       - name: Run Trivy vulnerability scanner
-        if: steps.detect-changes.outputs.changed != ''
+        #if: steps.detect-changes.outputs.changed != ''
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: '${{ env.IMAGE_NAME }}'
@@ -127,16 +132,16 @@ jobs:
       
        # docker push image to dockerhub
       - name: Docker Push to docker hub Repository
-        if: steps.detect-changes.outputs.changed != ''
+        #if: steps.detect-changes.outputs.changed != ''
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           docker push ${IMAGE_NAME}
       - name: Save image name
-        if: steps.detect-changes.outputs.changed != ''
+        #if: steps.detect-changes.outputs.changed != ''
         run: echo "IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:${{ github.ref_name }}-${{ github.run_id }}" >> image_name.txt
 
       - name: Upload image name artifact
-        if: steps.detect-changes.outputs.changed != ''
+        #if: steps.detect-changes.outputs.changed != ''
         uses: actions/upload-artifact@v4
         with:
           name: image-name-${{ matrix.service }}
