@@ -113,8 +113,8 @@ jobs:
           git config --global user.email "ashishrlad@gmail.com"
           ls -lah
           pwd
-          sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }}|" manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
-          cat manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
+          sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }}|" manifest-repo/main/manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
+          cat manifest-repo/main/manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
 
       - name: Push Updated Manifest
         run: |
