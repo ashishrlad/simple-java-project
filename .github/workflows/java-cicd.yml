@@ -49,7 +49,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-        - name: Sparse Checkout ${{ matrix.service }}
+        - name: Sparse Checkout
           uses: actions/checkout@v4
           with:
             repository: ashishrlad/simple-java-project
