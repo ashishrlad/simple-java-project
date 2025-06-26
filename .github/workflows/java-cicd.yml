@@ -111,7 +111,7 @@ jobs:
           name: image-name-${{ matrix.service }}
           path: image_name.txt
    
- deploy-prod:
+ deploy-MS1-prod:
      if: github.ref == 'refs/heads/prod'
      needs: microservice-one-job-ci   
      runs-on: ubuntu-latest
@@ -154,7 +154,7 @@ jobs:
            git add . 
            git commit -m "Updated image for ${{ matrix.service }} on ${{ github.ref_name }"
            git push origin main
- deploy-dev:
+ deploy-MS1-dev:
      if: github.ref == 'refs/heads/dev'
      needs: microservice-one-job-ci
      runs-on: ubuntu-latest
@@ -185,7 +185,7 @@ jobs:
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin dev
- deploy-uat:
+ deploy-MS1-uat:
      if: github.ref == 'refs/heads/uat'
      needs: microservice-one-job-ci
      runs-on: ubuntu-latest
@@ -216,7 +216,7 @@ jobs:
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin uat
- deploy-main:
+ deploy-MS1-main:
      if: github.ref == 'refs/heads/main'
      needs: microservice-one-job-ci
      runs-on: ubuntu-latest
@@ -355,7 +355,7 @@ jobs:
         with:
           name: image-name-${{ matrix.service }}
           path: image_name.txt
- deploy-prod:
+ deploy-MS2-prod:
      if: github.ref == 'refs/heads/prod'
      needs: microservice-two-job-ci
      runs-on: ubuntu-latest
@@ -399,7 +399,7 @@ jobs:
            git commit -m "Updated image for ${{ matrix.service }} on ${{ github.ref_name }"
            git push origin main
 
- deploy-dev:
+ deploy-MS2-dev:
      if: github.ref == 'refs/heads/dev'
      needs: microservice-two-job-ci
      runs-on: ubuntu-latest
@@ -430,7 +430,7 @@ jobs:
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin dev
- deploy-uat:
+ deploy-MS2-uat:
      if: github.ref == 'refs/heads/uat'
      needs: microservice-two-job-ci
      runs-on: ubuntu-latest
@@ -461,7 +461,7 @@ jobs:
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin uat
- deploy-main:
+ deploy-MS2-main:
      if: github.ref == 'refs/heads/main'
      needs: microservice-two-job-ci
      runs-on: ubuntu-latest
