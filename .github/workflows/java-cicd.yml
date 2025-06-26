@@ -91,25 +91,25 @@ jobs:
          fi
     
     - name: Read image name
-        id: read_image
-        run: |
+      id: read_image
+      run: |
           IMAGE_NAME=$(cat image_name.txt)
           echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
 
-      - name: Pull Docker Image
-        run: |
+    - name: Pull Docker Image
+      run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           docker pull ${{ env.IMAGE_NAME }}
 
-      - name: Checkout manifest repo
-        uses: actions/checkout@v4
-        with:
+    - name: Checkout manifest repo
+      uses: actions/checkout@v4
+      with:
           repository: ashishrlad/config_repo_samplejava
           token: ${{ secrets.GH_PAT_DEST_REPO1 }}
           path: manifest-repo
 
-      - name: Update Deployment File
-        run: |
+    - name: Update Deployment File
+      run: |
           git config --global user.name "ashishrlad"
           git config --global user.email "ashishrlad@gmail.com"
           ls -lah
@@ -117,8 +117,8 @@ jobs:
           sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }}|" manifest-repo/main/manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
           cat manifest-repo/main/manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
 
-      - name: Push Updated Manifest
-        run: |
+    - name: Push Updated Manifest
+      run: |
           cd manifest-repo
           git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
           git add .
