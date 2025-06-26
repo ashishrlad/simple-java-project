@@ -4,21 +4,17 @@ on:
   push:
     branches: [main, dev, stage, prod]
   workflow_dispatch:
-    
+
 env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   API_TOKEN_GITHUB: ${{ secrets.GH_PAT_DEST_REPO1 }}
-  #IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/simple-java-app:${{ github.ref_name }}-${{ github.run_id }}
-   
+
 jobs:
   java-ci:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         service: [microservice-one, microservice-two]
-
-    outputs:
-        service_changed-${{ matrix.service }}: ${{ steps.detect-changes.outputs.changed }}
 
     steps:
       - name: Checkout Code
@@ -35,35 +31,22 @@ jobs:
         if: steps.detect-changes.outputs.changed == ''
         run: echo "No changes in ${{ matrix.service }}"
 
-      # SonarQube Scan
-      #- name: SonarQube Scan
-        #if: steps.detect-changes.outputs.changed != ''
-		#run: |
-          #mvn clean verify sonar:sonar \
-            #-Dsonar.projectKey=${{ vars.PROJECT_KEY }} \
-            #-Dsonar.projectName=${{ vars.PROJECT_NAME }} \
-            #-Dsonar.host.url=http://13.233.71.33:9000 \
-            #-Dsonar.token=${{ secrets.SONAR_TOKEN }}
-
-      # Build Java with Maven in container
       - name: Build with Maven
         if: steps.detect-changes.outputs.changed != ''
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/app \
-            -w /app \
+            -w /app/${{ matrix.service }} \
             maven:3.9.4-eclipse-temurin-17 \
             mvn clean package
 
-      #Docker Build
       - name: Build Docker Image
         if: steps.detect-changes.outputs.changed != ''
         run: |
-           IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:${{ github.ref_name }}-${{ github.run_id }}
-           echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
-           docker build -t $IMAGE_NAME ${{ matrix.service }}
+          IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:${{ github.ref_name }}-${{ github.run_id }}
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+          docker build -t $IMAGE_NAME ${{ matrix.service }}
 
-      #Trivy Security Scan
       - name: Run Trivy vulnerability scanner
         if: steps.detect-changes.outputs.changed != ''
         uses: aquasecurity/trivy-action@master
@@ -74,30 +57,16 @@ jobs:
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
           output: 'trivy-report.txt'
-      # Send Email Report
-      #- name: Email Trivy Report
-	    #if: steps.detect-changes.outputs.changed != ''
-        #uses: dawidd6/action-send-mail@v3
-        #with:
-          #server_address: smtp.gmail.com
-          #server_port: 587
-          #username: ${{ secrets.MAIL_USERNAME }}
-          #password: ${{ secrets.MAIL_PASSWORD }}
-          #subject: "Trivy Report - ${{ github.repository }} (${{ github.ref_name }})"
-          #body: "Attached Trivy scan report for image built from ${{ github.ref_name }}."
-          #to: ashishrlad@gmail.com
-          #from: ${{ secrets.MAIL_USERNAME }}
-          #attachments: trivy-report.txt
-      
-       #docker push image to dockerhub
-      - name: Docker Push to docker hub Repository
+
+      - name: Docker Push to Docker Hub
         if: steps.detect-changes.outputs.changed != ''
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-          docker push ${IMAGE_NAME}
+          docker push ${{ env.IMAGE_NAME }}
+
       - name: Save image name
         if: steps.detect-changes.outputs.changed != ''
-        run: echo "IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:${{ github.ref_name }}-${{ github.run_id }}" >> image_name.txt
+        run: echo "${{ env.IMAGE_NAME }}" > image_name.txt
 
       - name: Upload image name artifact
         if: steps.detect-changes.outputs.changed != ''
@@ -105,162 +74,50 @@ jobs:
         with:
           name: image-name-${{ matrix.service }}
           path: image_name.txt
-  deploy-prod:
-    if: github.ref == 'refs/heads/prod'
-    needs: java-ci    
-    runs-on: ubuntu-latest
-    environment: production   # This enforces manual approval
-    strategy:
-      matrix:
-        service: [microservice-one, microservice-two]
-    steps:
-      - name: Download image name artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: image-name-${{ matrix.service }}
-      
-      - name: Read image name
-        id: read_image
-        run: |
-          IMAGE_NAME=$(cat image_name.txt)
-          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
-      
-      - name: Pull Docker Image from DockerHub for ${{ github.ref_name }} git branch
-        run: |
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-          docker pull ${IMAGE_NAME}
-      
-      - name: Checkout menifeast repository
-        uses: actions/checkout@v4
-        with:
-            repository: ashishrlad/config_repo_samplejava
-            token: ${{ secrets.GH_PAT_DEST_REPO1 }}
-            path: manifest-repo/main
-            #persist-credentials: true			
-      - name: "Updated Image Tag for ${{ github.ref_name }} git branch" 
-        run: |
-          git config --global user.name "ashishrlad"
-          git config --global user.email "ashishrlad@gmail.com"
-          sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
-          cat manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
-      
-      - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
-        run: |
-          cd manifest-repo/main/manifest-repo
-          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
-          git config --global init.defaultBranch ${{ github.ref_name }}
-          git add . 
-          git commit -m "Updated image for ${{ matrix.service }} on ${{ github.ref_name }"
-          git push origin main
 
-  deploy-dev:
-    if: github.ref == 'refs/heads/dev'
-    needs: java-ci    
+  deploy:
+    needs: java-ci
     runs-on: ubuntu-latest
-    environment: dev   # This enforces manual approval
-    steps:
-      - name: Pull Docker Image from DockerHub for ${{ github.ref_name }} git branch
-        run: |
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-          docker pull ${IMAGE_NAME}
-      - name: Checkout private tools
-        uses: actions/checkout@v4
-        with:
-            repository: ashishrlad/config_repo_samplejava
-            token: ${{ secrets.GH_PAT_DEST_REPO1 }} # `GH_PAT` is a secret that contains your PAT
-            path: manifest-repo/main
-            persist-credentials: true
-      - name: "Updated Image Tag for ${{ github.ref_name }} git branch" 
-        run: |
-          git config --global user.name "ashishrlad"
-          git config --global user.email "ashishrlad@gmail.com"
-          sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/main/manifest-repo/main/guestbookdeployment.yml
-          cat manifest-repo/main/manifest-repo/main/guestbookdeployment.yml
-      - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
-        run: |
-          cd manifest-repo/main/manifest-repo
-          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
-          git config --global init.defaultBranch ${{ github.ref_name }}
-          git add . 
-          git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
-          git push origin dev
-  deploy-uat:
-    if: github.ref == 'refs/heads/uat'
-    needs: java-ci    
-    runs-on: ubuntu-latest
-    environment: uat   # This enforces manual approval
-    steps:
-      - name: Pull Docker Image from DockerHub for ${{ github.ref_name }} git branch
-        run: |
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-          docker pull ${IMAGE_NAME}
-      - name: Checkout private tools
-        uses: actions/checkout@v4
-        with:
-            repository: ashishrlad/config_repo_samplejava
-            token: ${{ secrets.GH_PAT_DEST_REPO1 }} # `GH_PAT` is a secret that contains your PAT
-            path: manifest-repo/main
-            persist-credentials: true
-      - name: "Updated Image Tag for ${{ github.ref_name }} git branch" 
-        run: |
-          git config --global user.name "ashishrlad"
-          git config --global user.email "ashishrlad@gmail.com"
-          sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/main/manifest-repo/main/guestbookdeployment.yml
-          cat manifest-repo/main/manifest-repo/main/guestbookdeployment.yml
-      - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
-        run: |
-          cd manifest-repo/main/manifest-repo
-          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
-          git config --global init.defaultBranch ${{ github.ref_name }}
-          git add . 
-          git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
-          git push origin uat
-  
-  deploy-main:
-    if: github.ref == 'refs/heads/main'
-    needs: java-ci    
-    runs-on: ubuntu-latest
-    environment: production   # This enforces manual approval
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/uat' || github.ref == 'refs/heads/prod'
     strategy:
       matrix:
         service: [microservice-one, microservice-two]
+
     steps:
       - name: Download image name artifact
         uses: actions/download-artifact@v3
         with:
           name: image-name-${{ matrix.service }}
-      
+
       - name: Read image name
         id: read_image
         run: |
           IMAGE_NAME=$(cat image_name.txt)
           echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
-      
-      - name: Pull Docker Image from DockerHub for ${{ github.ref_name }} git branch
+
+      - name: Pull Docker Image
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-          docker pull ${IMAGE_NAME}
-      
-      - name: Checkout menifeast repository
+          docker pull ${{ env.IMAGE_NAME }}
+
+      - name: Checkout manifest repo
         uses: actions/checkout@v4
         with:
-            repository: ashishrlad/config_repo_samplejava
-            token: ${{ secrets.GH_PAT_DEST_REPO1 }}
-            path: manifest-repo/main
-            persist-credentials: true
-      
-      - name: "Updated Image Tag for ${{ github.ref_name }} git branch" 
+          repository: ashishrlad/config_repo_samplejava
+          token: ${{ secrets.GH_PAT_DEST_REPO1 }}
+          path: manifest-repo
+
+      - name: Update Deployment File
         run: |
           git config --global user.name "ashishrlad"
           git config --global user.email "ashishrlad@gmail.com"
-          sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
+          sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }}|" manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
           cat manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
-      
-      - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
+
+      - name: Push Updated Manifest
         run: |
-          cd manifest-repo/main/manifest-repo
+          cd manifest-repo
           git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
-          git config --global init.defaultBranch ${{ github.ref_name }}
-          git add . 
-          git commit -m "Updated image for ${{ matrix.service }} on ${{ github.ref_name }"
+          git add .
+          git commit -m "Updated image for ${{ matrix.service }} on ${{ github.ref_name }}"
           git push origin main
