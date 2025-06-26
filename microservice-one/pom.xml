@@ -37,7 +37,6 @@
         <version>3.4.0</version>
         <configuration>
           <warSourceDirectory>simple-java-project/microservice-one/src/main/webapp</warSourceDirectory>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>
 
