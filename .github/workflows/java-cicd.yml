@@ -3,16 +3,15 @@ name: Java CI Pipeline multiple java service per repo
 on:
   push:
     branches: [main, dev, stage, prod]
-     paths:
+    paths:
       - '**/microservice-one/**'
       - '**/microservice-two/**'
   workflow_dispatch:
-    
+
 env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   API_TOKEN_GITHUB: ${{ secrets.GH_PAT_DEST_REPO1 }}
-  #IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/simple-java-app:${{ github.ref_name }}-${{ github.run_id }}
-   
+  # IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/simple-java-app:${{ github.ref_name }}-${{ github.run_id }}
 jobs:
   microservice-one-job-ci:
     if: contains(github.event.head_commit.message, 'microservice-one') || 
