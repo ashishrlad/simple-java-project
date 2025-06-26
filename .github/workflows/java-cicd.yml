@@ -500,7 +500,7 @@ jobs:
           git config --global user.email "ashishrlad@gmail.com"
           sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/manifest-repo/${{ matrix.service }}/${{ matrix.service }}-deployment.yml
           cat manifest-repo/manifest-repo/${{ matrix.service }}/${{ matrix.service }}-deployment.yml
-      - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
+      - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch"
         run: |
           cd manifest-repo/main/manifest-repo
           git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
@@ -508,5 +508,3 @@ jobs:
           git add . 
           git commit -m "Updated image for ${{ matrix.service }} on ${{ github.ref_name }"
           git push origin main
-
-		  
