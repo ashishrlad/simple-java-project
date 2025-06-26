@@ -136,7 +136,7 @@ jobs:
 
       - name: Upload image name artifact
         if: steps.detect-changes.outputs.changed != ''
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: image-name-${{ matrix.service }}
           path: image_name.txt
@@ -381,7 +381,7 @@ jobs:
 
       - name: Upload image name artifact
         if: steps.detect-changes.outputs.changed != ''
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: image-name-${{ matrix.service }}
           path: image_name.txt
