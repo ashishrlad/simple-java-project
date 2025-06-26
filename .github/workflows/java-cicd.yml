@@ -18,7 +18,7 @@ jobs:
         service: [microservice-one, microservice-two]
 
     outputs:
-      service_changed-${{ matrix.service }}: ${{ steps.detect-changes.outputs.changed }}
+        service_changed-${{ matrix.service }}: ${{ steps.detect-changes.outputs.changed }}
 
     steps:
       - name: Checkout Code
