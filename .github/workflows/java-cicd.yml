@@ -126,6 +126,7 @@ jobs:
       run: |
           git config --global user.name "ashishrlad"
           git config --global user.email "ashishrlad@gmail.com"
+          cd manifest-repo
           ls -lah
           pwd
           sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }}|" manifest-repo/main/manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
