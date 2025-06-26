@@ -86,7 +86,7 @@ jobs:
           ##echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           ##docker pull ${IMAGE_NAME}
     
-      - name: Pull Docker Image from DockerHub for ${{ github.ref_name }}
+      - name: Pull Docker Image from DockerHub for ${{ github.ref_name }} git branch
         if: github.ref == 'refs/heads/main'
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
@@ -99,14 +99,18 @@ jobs:
             path: manifest-repo/main
             persist-credentials: true
 
-      - name: "Push Updated Image Tag" 
+      - name: "Updated Image Tag for ${{ github.ref_name }} git branch" 
         run: |
-          git clone https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
-          git config --global user.name "ashishrlad"
-          git config --global user.email "ashishrlad@gmail.com"
+          #git clone https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
+          #git config --global user.name "ashishrlad"
+          #git config --global user.email "ashishrlad@gmail.com"
+          pwd 
+          ls -lah
           cd config_repo_samplejava/manifest-repo/main
           sed -i "s|image:.*|image: ${IMAGE_NAME}|" guestbookdeployment.yml
           cat guestbookdeployment.yml
+      - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
+        run: |
           git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
           git config --global init.defaultBranch ${{ github.ref_name }}
           git add . 
