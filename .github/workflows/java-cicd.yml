@@ -106,7 +106,9 @@ jobs:
           #git config --global user.email "ashishrlad@gmail.com"
           pwd 
           ls -lah
-          cd config_repo_samplejava/manifest-repo/main
+          cd manifest-repo
+          pwd
+          ls -lah
           sed -i "s|image:.*|image: ${IMAGE_NAME}|" guestbookdeployment.yml
           cat guestbookdeployment.yml
       - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
