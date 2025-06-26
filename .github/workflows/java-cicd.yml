@@ -136,8 +136,7 @@ jobs:
             repository: ashishrlad/config_repo_samplejava
             token: ${{ secrets.GH_PAT_DEST_REPO1 }}
             path: manifest-repo/main
-            persist-credentials: true
-			
+            #persist-credentials: true			
       - name: "Updated Image Tag for ${{ github.ref_name }} git branch" 
         run: |
           git config --global user.name "ashishrlad"
