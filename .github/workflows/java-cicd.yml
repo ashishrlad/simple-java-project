@@ -100,12 +100,12 @@ jobs:
             echo "missing=false" >> $GITHUB_OUTPUT
           fi
     
-    - name: Read image name
-      if: steps.check_file.outputs.missing == 'false'
-      id: read_image
-      run: |
-        IMAGE_NAME=$(cat image_name.txt)
-        echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+    #- name: Read image name
+      #if: steps.check_file.outputs.missing == 'false'
+      #id: read_image
+      #run: |
+        #IMAGE_NAME=$(cat image_name.txt)
+        #echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
     
     - name: Pull Docker Image
       if: steps.check_file.outputs.missing == 'false'
@@ -126,11 +126,11 @@ jobs:
       run: |
           git config --global user.name "ashishrlad"
           git config --global user.email "ashishrlad@gmail.com"
-          cd manifest-repo/manifest-repo
-          ls -lah
-          pwd
-          sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }}|" manifest-repo/manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
-          cat manifest-repo/manifest-repo/main/${{ matrix.service }}/guestbookdeployment.yml
+          #cd manifest-repo/manifest-repo
+          #ls -lah
+          #pwd
+          sed -i "s|image:.*|image: ${{ env.IMAGE_NAME }}|" manifest-repo/manifest-repo/${{ matrix.service }}/guestbookdeployment.yml
+          cat manifest-repo/manifest-repo/${{ matrix.service }}/guestbookdeployment.yml
 
     - name: Push Updated Manifest
       if: steps.check_file.outputs.missing == 'false'
