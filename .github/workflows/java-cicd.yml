@@ -3,6 +3,9 @@ name: Java CI Pipeline multiple java service per repo
 on:
   push:
     branches: [main, dev, stage, prod]
+    paths:
+      - 'microservice-one/**'
+      - 'microservice-two/**'
   workflow_dispatch:
 
 env:
@@ -17,15 +20,25 @@ jobs:
         service: [microservice-one, microservice-two]
 
     steps:
-      - name: Checkout Code
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Detect changes in ${{ matrix.service }}
-        id: detect-changes
+      - name: Check if folder changed
+        id: check_changes
         run: |
-          git fetch origin ${{ github.event.before }}
+          echo "Checking changes for ${{ matrix.service }}"
+          git fetch origin ${{ github.ref_name }}
           CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep "^${{ matrix.service }}/" || true)
-          echo "changed=$CHANGED" >> $GITHUB_OUTPUT
+          if [ -n "$CHANGED" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and Deploy ${{ matrix.service }}
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          echo "Deploying ${{ matrix.service }} to ${{ github.ref_name }} environment"
 
       - name: Skip if no change in ${{ matrix.service }}
         if: steps.detect-changes.outputs.changed == ''
