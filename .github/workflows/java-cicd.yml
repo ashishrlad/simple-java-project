@@ -49,8 +49,16 @@ jobs:
     if: needs.check_changes.outputs.microservice_one_changed == 'true'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout only microservice-one
+        uses: actions/checkout@v4
+        with:
+          repository: ashishrlad/simple-java-project    # or omit if working in same repo
+          token: ${{ secrets.GITHUGH_PAT_DEST_REPO1 }}
+          path: .                                        # or 'microservice-one' if you want it in a subdir
+          sparse-checkout: |
+              microservice-one/
+          sparse-checkout-cone-mode: true
+          fetch-depth: 1
         #with:
           #fetch-depth: 0
 
