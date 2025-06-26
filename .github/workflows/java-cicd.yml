@@ -11,9 +11,9 @@ on:
 env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   API_TOKEN_GITHUB: ${{ secrets.GH_PAT_DEST_REPO1 }}
-  # IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/simple-java-app:${{ github.ref_name }}-${{ github.run_id }}
+
 jobs:
- check_changes:
+  check_changes:
     runs-on: ubuntu-latest
     outputs:
       microservice_one_changed: ${{ steps.detect.outputs.microservice_one_changed }}
@@ -43,22 +43,22 @@ jobs:
           else
             echo "microservice_two_changed=false" >> $GITHUB_OUTPUT
           fi
- microservice-one-job-ci:
+
+  microservice-one-job-ci:
     needs: check_changes
     if: needs.check_changes.outputs.microservice_one_changed == 'true'
-
     runs-on: ubuntu-latest
     steps:
-        - name: Sparse Checkout
-          uses: actions/checkout@v4
-          with:
-            repository: ashishrlad/simple-java-project
-            token: ${{ secrets.GH_PAT_DEST_REPO1 }}
-            path: .
-            sparse-checkout: |
-               microservice_one
-            sparse-checkout-cone-mode: true
-            fetch-depth: 1
+      - name: Sparse Checkout microservice-one
+        uses: actions/checkout@v4
+        with:
+          repository: ashishrlad/simple-java-project
+          token: ${{ secrets.GH_PAT_DEST_REPO1 }}
+          path: .
+          sparse-checkout: |
+            microservice-one/
+          sparse-checkout-cone-mode: true
+          fetch-depth: 1
 
      # SonarQube Scan
       #- name: SonarQube Scan
@@ -131,7 +131,7 @@ jobs:
           name: image-name-${{ matrix.service }}
           path: image_name.txt
    
- deploy-MS1-prod:
+  deploy-MS1-prod:
      if: github.ref == 'refs/heads/prod'
      needs: microservice-one-job-ci   
      runs-on: ubuntu-latest
@@ -170,7 +170,7 @@ jobs:
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin main
- deploy-MS1-dev:
+  deploy-MS1-dev:
      if: github.ref == 'refs/heads/dev'
      needs: microservice-one-job-ci
      runs-on: ubuntu-latest
@@ -201,7 +201,7 @@ jobs:
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin dev
- deploy-MS1-uat:
+  deploy-MS1-uat:
      if: github.ref == 'refs/heads/uat'
      needs: microservice-one-job-ci
      runs-on: ubuntu-latest
@@ -232,7 +232,7 @@ jobs:
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin uat
- deploy-MS1-main:
+  deploy-MS1-main:
      if: github.ref == 'refs/heads/main'
      needs: microservice-one-job-ci
      runs-on: ubuntu-latest
@@ -275,7 +275,7 @@ jobs:
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin main
- microservice-two-job-ci:
+  microservice-two-job-ci:
     needs: check_changes
     if: needs.check_changes.outputs.microservice_two_changed == 'true'
     runs-on: ubuntu-latest
@@ -371,7 +371,7 @@ jobs:
         with:
           name: image-name-${{ matrix.service }}
           path: image_name.txt
- deploy-MS2-prod:
+  deploy-MS2-prod:
      if: github.ref == 'refs/heads/prod'
      needs: microservice-two-job-ci
      runs-on: ubuntu-latest
@@ -415,7 +415,7 @@ jobs:
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin main
 
- deploy-MS2-dev:
+  deploy-MS2-dev:
      if: github.ref == 'refs/heads/dev'
      needs: microservice-two-job-ci
      runs-on: ubuntu-latest
@@ -446,7 +446,7 @@ jobs:
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin dev
- deploy-MS2-uat:
+  deploy-MS2-uat:
      if: github.ref == 'refs/heads/uat'
      needs: microservice-two-job-ci
      runs-on: ubuntu-latest
@@ -477,7 +477,7 @@ jobs:
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin uat
- deploy-MS2-main:
+  deploy-MS2-main:
      if: github.ref == 'refs/heads/main'
      needs: microservice-two-job-ci
      runs-on: ubuntu-latest
