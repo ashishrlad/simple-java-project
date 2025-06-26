@@ -9,7 +9,8 @@ on:
 env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   API_TOKEN_GITHUB: ${{ secrets.GH_PAT_DEST_REPO1 }}
-  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/simple-java-app/${{ github.ref_name }}:${{ github.run_id }}
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/simple-java-app:${{ github.ref_name }}-${{ github.run_id }}
+  #IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/simple-java-app/${{ github.ref_name }}:${{ github.run_id }}
   
 jobs:
   java-ci:
