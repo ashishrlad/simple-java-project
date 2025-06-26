@@ -84,12 +84,13 @@ jobs:
         service: [microservice-one, microservice-two]
 
     steps:
-      - name: Download image name artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: image-name-${{ matrix.service }}
-
-      - name: Read image name
+    - name: Download image name artifact
+      run: |
+         if ! gh run download --name image-name-${{ matrix.service }}; then
+         echo "::warning::Artifact for ${{ matrix.service }} not found. Skipping."
+         fi
+    
+    - name: Read image name
         id: read_image
         run: |
           IMAGE_NAME=$(cat image_name.txt)
