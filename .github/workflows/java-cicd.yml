@@ -358,8 +358,6 @@ jobs:
         with:
           name: image-name-${{ matrix.service }}
           path: image_name.txt
-		  
-		  
   deploy-prod:
     if: github.ref == 'refs/heads/prod'
     needs: microservice-two-job-ci
