@@ -49,14 +49,16 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - name: Sparse checkout microservice-one
-        uses: actions/checkout@v4
-        with:
-          path: .
-          sparse-checkout: |
-            microservice-one/
-          sparse-checkout-cone-mode: true
-          fetch-depth: 1
+        - name: Sparse Checkout ${{ matrix.service }}
+          uses: actions/checkout@v4
+          with:
+            repository: ashishrlad/simple-java-project
+            token: ${{ secrets.GH_PAT_DEST_REPO1 }}
+            path: .
+            sparse-checkout: |
+               microservice_one
+            sparse-checkout-cone-mode: true
+            fetch-depth: 1
 
      # SonarQube Scan
       #- name: SonarQube Scan
