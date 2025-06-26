@@ -84,6 +84,8 @@ jobs:
       # Build Java with Maven in container
       - name: Build microservice-one
         run: |
+          pwd 
+          ls -lah
           cd microservice-one
           ./mvnw clean install
       - name: Build with Maven
