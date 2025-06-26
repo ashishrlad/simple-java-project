@@ -13,9 +13,37 @@ env:
   API_TOKEN_GITHUB: ${{ secrets.GH_PAT_DEST_REPO1 }}
   # IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/simple-java-app:${{ github.ref_name }}-${{ github.run_id }}
 jobs:
+ check_changes:
+    runs-on: ubuntu-latest
+    outputs:
+      microservice_one_changed: ${{ steps.detect.outputs.microservice_one_changed }}
+      microservice_two_changed: ${{ steps.detect.outputs.microservice_two_changed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Detect folder changes
+        id: detect
+        run: |
+          echo "Checking for changes in microservices..."
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          if echo "$CHANGED_FILES" | grep -q '^microservice-one/'; then
+            echo "microservice_one_changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "microservice_one_changed=false" >> $GITHUB_OUTPUT
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q '^microservice-two/'; then
+            echo "microservice_two_changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "microservice_two_changed=false" >> $GITHUB_OUTPUT
+          fi
  microservice-one-job-ci:
-    if: contains(github.event.head_commit.message, 'microservice-one') || 
-        contains(join(github.event.commits.*.modified, ','), 'microservice-one')
+    needs: check_changes
+    if: needs.check_changes.outputs.microservice_one_changed == 'true'
 
     runs-on: ubuntu-latest
     #strategy:
@@ -260,8 +288,8 @@ jobs:
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin main
  microservice-two-job-ci:
-    if: contains(github.event.head_commit.message, 'microservice-two') || 
-        contains(join(github.event.commits.*.modified, ','), 'microservice-two')
+    needs: check_changes
+    if: needs.check_changes.outputs.microservice_two_changed == 'true'
     runs-on: ubuntu-latest
     strategy:
       matrix:
