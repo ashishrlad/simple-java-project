@@ -85,7 +85,11 @@ jobs:
       - name: Build with Maven
         #if: steps.detect-changes.outputs.changed != ''
         run: |
+          pwd 
+          ls -ll
           cd microservice-one/
+          pwd
+          ls -lah
           docker run --rm \
             -v ${{ github.workspace }}:/app \
             -w /app \
