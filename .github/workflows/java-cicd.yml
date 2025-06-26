@@ -80,7 +80,7 @@ jobs:
     environment: production   # This enforces manual approval
     steps:
       - name: Pull Docker Image from DockerHub for ${{ github.ref_name }} git branch
-        if: github.ref_name  == 'refs/heads/main'
+        if: github.ref_name  == 'refs/heads/main' || github.event.input.environment == 'main'
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           docker pull ${IMAGE_NAME}
@@ -121,7 +121,7 @@ jobs:
     environment: dev   # This enforces manual approval
     steps:
       - name: Pull Docker Image from DockerHub for ${{ github.ref_name }} git branch
-        if: github.ref_name == 'dev'
+        if: github.ref_name == 'dev' || github.event.input.environment == 'dev'
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           docker pull ${IMAGE_NAME}
