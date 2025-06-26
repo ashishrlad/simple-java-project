@@ -106,7 +106,7 @@ jobs:
           #git config --global user.email "ashishrlad@gmail.com"
           pwd 
           ls -lah
-          cd manifest-repo/main
+          cd manifest-repo/main/manifest-repo/main
           pwd
           ls -lah
           sed -i "s|image:.*|image: ${IMAGE_NAME}|" guestbookdeployment.yml
