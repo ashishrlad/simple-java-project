@@ -100,12 +100,12 @@ jobs:
             echo "missing=false" >> $GITHUB_OUTPUT
           fi
     
-    #- name: Read image name
-      #if: steps.check_file.outputs.missing == 'false'
-      #id: read_image
-      #run: |
-        #IMAGE_NAME=$(cat image_name.txt)
-        #echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+    - name: Read image name
+      if: steps.check_file.outputs.missing == 'false'
+      id: read_image
+      run: |
+        IMAGE_NAME=$(cat image_name.txt)
+        echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
     
     - name: Pull Docker Image
       if: steps.check_file.outputs.missing == 'false'
