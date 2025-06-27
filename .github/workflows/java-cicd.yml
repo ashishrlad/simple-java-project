@@ -259,15 +259,15 @@ jobs:
        matrix:
          service: [microservice-one, microservice-two]
      steps:
-       - name: Download image name artifact
-         uses: actions/download-artifact@v4
-         with:
-           name: image-name-${{ matrix.service }}
-       - name: Read image name
-         id: read_image
-         run: |
-           IMAGE_NAME=$(cat image_name.txt)
-           echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+       #- name: Download image name artifact
+         #uses: actions/download-artifact@v4
+         #with:
+           #name: image-name-${{ matrix.service }}
+       #- name: Read image name
+         #id: read_image
+         #run: |
+           #IMAGE_NAME=$(cat image_name.txt)
+           #echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
        - name: Pull Docker Image from DockerHub for ${{ github.ref_name }} git branch
          run: |
            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
