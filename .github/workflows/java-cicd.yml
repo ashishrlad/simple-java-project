@@ -156,7 +156,7 @@ jobs:
      runs-on: ubuntu-latest
      env:
       CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
-      IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
      environment: production   # This enforces manual approval
      #strategy:
        #matrix:
@@ -198,7 +198,7 @@ jobs:
      runs-on: ubuntu-latest
      env:
       CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
-      IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
      environment: dev   # This enforces manual approval
      steps:
        - name: Pull Docker Image from DockerHub for ${{ github.ref_name }} git branch
@@ -232,7 +232,7 @@ jobs:
      runs-on: ubuntu-latest
      env:
       CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
-      IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
      environment: uat   # This enforces manual approval
      steps:
        - name: Pull Docker Image from DockerHub for ${{ github.ref_name }} git branch
@@ -266,7 +266,7 @@ jobs:
      runs-on: ubuntu-latest
      env:
       CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
-      IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
+      IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
      environment: production   # This enforces manual approval
      #strategy:
        #matrix:
