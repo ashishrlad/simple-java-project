@@ -156,7 +156,7 @@ jobs:
             #ls -lah
             #cd manifest-repo/microservice-one/${{ github.ref_name }}/
             #ls -lah
-            sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
+            sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/microservice-one/manifest-repo/microservice-one/microservice-one-deployment.yml
             cat manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
        - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
          run: |
