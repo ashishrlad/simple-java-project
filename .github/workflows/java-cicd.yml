@@ -298,8 +298,8 @@ jobs:
             git config --global user.email "ashishrlad@gmail.com"
             pwd
             ls -lah
-            sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/manifest-repo/${{ matrix.service }}/${{ matrix.service }}-deployment.yml
-            cat manifest-repo/manifest-repo/${{ matrix.service }}/${{ matrix.service }}-deployment.yml
+            sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/manifest-repo/microservice-one/microservice-one-deployment.yml
+            cat manifest-repo/manifest-repo/microservice-one/microservice-one-deployment.yml
        - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
          run: |
            cd manifest-repo/main/manifest-repo
