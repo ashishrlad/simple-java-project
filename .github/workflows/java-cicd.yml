@@ -50,6 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
+      IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
     steps:
       - name: Checkout only microservice-one
         uses: actions/checkout@v4
@@ -153,10 +154,13 @@ jobs:
      if: github.ref == 'refs/heads/prod'
      needs: microservice-one-job-ci   
      runs-on: ubuntu-latest
+     env:
+      CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
+      IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
      environment: production   # This enforces manual approval
-     strategy:
-       matrix:
-         service: [microservice-one, microservice-two]
+     #strategy:
+       #matrix:
+         #service: [microservice-one, microservice-two]
      steps:
        - name: Read image name
          id: read_image
@@ -192,6 +196,9 @@ jobs:
      if: github.ref == 'refs/heads/dev'
      needs: microservice-one-job-ci
      runs-on: ubuntu-latest
+     env:
+      CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
+      IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
      environment: dev   # This enforces manual approval
      steps:
        - name: Pull Docker Image from DockerHub for ${{ github.ref_name }} git branch
@@ -223,6 +230,9 @@ jobs:
      if: github.ref == 'refs/heads/uat'
      needs: microservice-one-job-ci
      runs-on: ubuntu-latest
+     env:
+      CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
+      IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
      environment: uat   # This enforces manual approval
      steps:
        - name: Pull Docker Image from DockerHub for ${{ github.ref_name }} git branch
@@ -254,6 +264,9 @@ jobs:
      if: github.ref == 'refs/heads/main'
      needs: microservice-one-job-ci
      runs-on: ubuntu-latest
+     env:
+      CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
+      IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
      environment: production   # This enforces manual approval
      strategy:
        matrix:
@@ -293,6 +306,7 @@ jobs:
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin main
+  
   microservice-two-job-ci:
     needs: check_changes
     if: needs.check_changes.outputs.microservice_two_changed == 'true'
