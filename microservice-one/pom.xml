@@ -8,7 +8,7 @@
   <artifactId>works-with-heroku</artifactId>
   <version>1.0</version>
   <packaging>war</packaging>
- 
+  
   <dependencies>
     <dependency>
       <groupId>javax.servlet</groupId>
