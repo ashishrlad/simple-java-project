@@ -154,7 +154,7 @@ jobs:
             cd manifest-repo/microservice-one
             pwd 
             ls -lah
-            cd manifest-repo/
+            cd manifest-repo/manifest-repo/microservice-one
             ls -lah
             sed -i "s|image:.*|image: ${IMAGE_NAME}|" microservice-one/microservice-one-deployment.yml
             cat manifest-repo/microservice-one/manifest-repo/microservice-one/microservice-one-deployment.yml
