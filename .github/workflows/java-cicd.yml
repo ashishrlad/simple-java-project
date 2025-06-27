@@ -151,13 +151,13 @@ jobs:
          run: |
             git config --global user.name "ashishrlad"
             git config --global user.email "ashishrlad@gmail.com"
-            cd manifest-repo
+            cd manifest-repo/microservice-one
             pwd 
             ls -lah
-            cd manifest-repo/main/manifest-repo/
+            cd manifest-repo/
             ls -lah
             sed -i "s|image:.*|image: ${IMAGE_NAME}|" microservice-one/microservice-one-deployment.yml
-            cat manifest-repo/main/manifest-repo/microservice-one/microservice-one-deployment.yml
+            cat manifest-repo/microservice-one/manifest-repo/microservice-one/microservice-one-deployment.yml
        - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
          run: |
            cd manifest-repo/main/manifest-repo
