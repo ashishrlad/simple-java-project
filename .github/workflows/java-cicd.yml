@@ -299,6 +299,8 @@ jobs:
             cd manifest-repo
             pwd
             ls -lah
+            cd main
+            ls -lah
             sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/manifest-repo/microservice-one/microservice-one-deployment.yml
             cat manifest-repo/manifest-repo/microservice-one/microservice-one-deployment.yml
        - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
