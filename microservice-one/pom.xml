@@ -32,7 +32,7 @@
 
   <build>
     <plugins>
-      <!-- 👇 Compiler plugin with Java 8 -->
+       <!-- 👇 Compiler plugin with Java 8 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
