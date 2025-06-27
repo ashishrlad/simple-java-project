@@ -151,11 +151,6 @@ jobs:
          run: |
             git config --global user.name "ashishrlad"
             git config --global user.email "ashishrlad@gmail.com"
-            #cd manifest-repo/microservice-one/manifest-repo/microservice-one/
-            #pwd 
-            #ls -lah
-            #cd microservice-one/
-            #ls -lah
             sed -i "s|image:.*|image: ${IMAGE_NAME}|"  manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
             cat manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
        - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
@@ -174,7 +169,7 @@ jobs:
      env:
       CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
       IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
-     environment: prod    # This enforces manual approval
+     environment: prod   # This enforces manual approval
      steps:
        - name: Docker pull
          run: |
@@ -191,11 +186,11 @@ jobs:
          run: |
             git config --global user.name "ashishrlad"
             git config --global user.email "ashishrlad@gmail.com"
-            sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/main/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
-            cat manifest-repo/main/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
+            sed -i "s|image:.*|image: ${IMAGE_NAME}|"  manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
+            cat manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
        - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
          run: |
-           cd manifest-repo/main/manifest-repo
+           cd manifest-repo/microservice-one/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
@@ -209,7 +204,7 @@ jobs:
      env:
       CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
       IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
-     environment: prod    # This enforces manual approval
+     environment: uat   # This enforces manual approval
      steps:
        - name: Docker pull
          run: |
@@ -226,11 +221,11 @@ jobs:
          run: |
             git config --global user.name "ashishrlad"
             git config --global user.email "ashishrlad@gmail.com"
-            sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/main/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
-            cat manifest-repo/main/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
+            sed -i "s|image:.*|image: ${IMAGE_NAME}|"  manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
+            cat manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
        - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
          run: |
-           cd manifest-repo/main/manifest-repo
+           cd manifest-repo/microservice-one/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
@@ -244,7 +239,7 @@ jobs:
      env:
       CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
       IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
-     environment: prod    # This enforces manual approval
+     environment: dev   # This enforces manual approval
      steps:
        - name: Docker pull
          run: |
@@ -261,11 +256,11 @@ jobs:
          run: |
             git config --global user.name "ashishrlad"
             git config --global user.email "ashishrlad@gmail.com"
-            sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/main/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
-            cat manifest-repo/main/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
+            sed -i "s|image:.*|image: ${IMAGE_NAME}|"  manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
+            cat manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
        - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
          run: |
-           cd manifest-repo/main/manifest-repo
+           cd manifest-repo/microservice-one/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
@@ -379,11 +374,11 @@ jobs:
          run: |
             git config --global user.name "ashishrlad"
             git config --global user.email "ashishrlad@gmail.com"
-            sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/main/manifest-repo/microservice-two/${{ github.ref_name }}/microservice-two-deployment.yml
-            cat manifest-repo/main/manifest-repo/microservice-two/${{ github.ref_name }}/microservice-two-deployment.yml
+            sed -i "s|image:.*|image: ${IMAGE_NAME}|"  manifest-repo/microservice-two/manifest-repo/microservice-two/${{ github.ref_name }}/microservice-two-deployment.yml
+            cat manifest-repo/microservice-two/manifest-repo/microservice-two/${{ github.ref_name }}/microservice-two-deployment.yml
        - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
          run: |
-           cd manifest-repo/main/manifest-repo
+           cd manifest-repo/microservice-two/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
@@ -414,16 +409,17 @@ jobs:
          run: |
             git config --global user.name "ashishrlad"
             git config --global user.email "ashishrlad@gmail.com"
-            sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/main/manifest-repo/microservice-two/${{ github.ref_name }}/microservice-two-deployment.yml
-            cat manifest-repo/main/manifest-repo/microservice-two/${{ github.ref_name }}/microservice-two-deployment.yml
+            sed -i "s|image:.*|image: ${IMAGE_NAME}|"  manifest-repo/microservice-two/manifest-repo/microservice-two/${{ github.ref_name }}/microservice-two-deployment.yml
+            cat manifest-repo/microservice-two/manifest-repo/microservice-two/${{ github.ref_name }}/microservice-two-deployment.yml
        - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
          run: |
-           cd manifest-repo/main/manifest-repo
+           cd manifest-repo/microservice-two/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin prod
+
   deploy-MS2-uat:
      if: github.ref == 'refs/heads/uat'
      needs: microservice-two-job-ci
@@ -431,7 +427,7 @@ jobs:
      env:
       CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
       IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/microservice-two:${{ github.ref_name }}-${{ github.run_id }}
-     environment: uat 
+     environment: uat   # This enforces manual approval
      steps:
        - name: Docker pull
          run: |
@@ -448,16 +444,17 @@ jobs:
          run: |
             git config --global user.name "ashishrlad"
             git config --global user.email "ashishrlad@gmail.com"
-            sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/main/manifest-repo/microservice-two/${{ github.ref_name }}/microservice-two-deployment.yml
-            cat manifest-repo/main/manifest-repo/microservice-two/${{ github.ref_name }}/microservice-two-deployment.yml
+            sed -i "s|image:.*|image: ${IMAGE_NAME}|"  manifest-repo/microservice-two/manifest-repo/microservice-two/${{ github.ref_name }}/microservice-two-deployment.yml
+            cat manifest-repo/microservice-two/manifest-repo/microservice-two/${{ github.ref_name }}/microservice-two-deployment.yml
        - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
          run: |
-           cd manifest-repo/main/manifest-repo
+           cd manifest-repo/microservice-two/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
            git push origin uat
+
   deploy-MS2-dev:
      if: github.ref == 'refs/heads/dev'
      needs: microservice-two-job-ci
@@ -482,11 +479,11 @@ jobs:
          run: |
             git config --global user.name "ashishrlad"
             git config --global user.email "ashishrlad@gmail.com"
-            sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/main/manifest-repo/microservice-two/${{ github.ref_name }}/microservice-two-deployment.yml
-            cat manifest-repo/main/manifest-repo/microservice-two/${{ github.ref_name }}/microservice-two-deployment.yml
+            sed -i "s|image:.*|image: ${IMAGE_NAME}|"  manifest-repo/microservice-two/manifest-repo/microservice-two/${{ github.ref_name }}/microservice-two-deployment.yml
+            cat manifest-repo/microservice-two/manifest-repo/microservice-two/${{ github.ref_name }}/microservice-two-deployment.yml
        - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
          run: |
-           cd manifest-repo/main/manifest-repo
+           cd manifest-repo/microservice-two/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
