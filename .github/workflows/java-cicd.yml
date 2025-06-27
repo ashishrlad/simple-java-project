@@ -262,7 +262,7 @@ jobs:
        - name: Download image name artifact
          uses: actions/download-artifact@v4
          with:
-           name: image-name-microservice-one
+           name: image-name-${{ matrix.service }}
        - name: Read image name
          id: read_image
          run: |
