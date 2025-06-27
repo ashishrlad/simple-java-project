@@ -49,7 +49,7 @@ jobs:
     if: needs.check_changes.outputs.microservice_one_changed == 'true'
     runs-on: ubuntu-latest
     env:
-      CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
+      ###CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
       IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
     steps:
       - name: Checkout only microservice-one
@@ -71,12 +71,9 @@ jobs:
          submodules: false
          set-safe-directory: true
 
-        #with:
-          #fetch-depth: 0
-
      # SonarQube Scan
       #- name: SonarQube Scan
-        #if: steps.detect-changes.outputs.changed != ''
+        ###if: steps.detect-changes.outputs.changed != ''
 		#run: |
           #mvn clean verify sonar:sonar \
             #-Dsonar.projectKey=${{ vars.PROJECT_KEY }} \
@@ -86,13 +83,9 @@ jobs:
 
       # Build Java with Maven in container
       - name: Build with Maven
-        #if: steps.detect-changes.outputs.changed != ''
+        ###if: steps.detect-changes.outputs.changed != ''
         run: |
-          pwd 
-          ls -ll
           cd microservice-one/
-          pwd
-          ls -lah
           docker run --rm \
             -v ${{ github.workspace }}:/app \
             -w /app \
@@ -101,7 +94,7 @@ jobs:
 
       # Docker Build
       - name: Build Docker Image
-        #if: steps.detect-changes.outputs.changed != ''
+        ###if: steps.detect-changes.outputs.changed != ''
         run: |
            IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
            echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
@@ -109,7 +102,7 @@ jobs:
 
       # Trivy Security Scan
       - name: Run Trivy vulnerability scanner
-        #if: steps.detect-changes.outputs.changed != ''
+        ###if: steps.detect-changes.outputs.changed != ''
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: '${{ env.IMAGE_NAME }}'
@@ -118,9 +111,10 @@ jobs:
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
           output: 'trivy-report.txt'
+      
       # Send Email Report
       #- name: Email Trivy Report
-	    #if: steps.detect-changes.outputs.changed != ''
+	    ###if: steps.detect-changes.outputs.changed != ''
         #uses: dawidd6/action-send-mail@v3
         #with:
           #server_address: smtp.gmail.com
@@ -140,15 +134,15 @@ jobs:
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           docker push ${IMAGE_NAME}
       #- name: Save image name
-        #if: steps.detect-changes.outputs.changed != ''
-        #run: echo "IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:${{ github.ref_name }}-${{ github.run_id }}" >> image_name.txt
+        ###if: steps.detect-changes.outputs.changed != ''
+      ##  #run: echo "IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:${{ github.ref_name }}-${{ github.run_id }}" >> image_name.txt
 
       #- name: Upload image name artifact
-        #if: steps.detect-changes.outputs.changed != ''
-        #uses: actions/upload-artifact@v4
-        #with:
-          #name: image-name-${{ matrix.service }}
-          #path: image_name.txt
+        ###if: steps.detect-changes.outputs.changed != ''
+        ###uses: actions/upload-artifact@v4
+        ###with:
+          ##name: image-name-${{ matrix.service }}
+          ##path: image_name.txt
    
   deploy-MS1-prod:
      if: github.ref == 'refs/heads/prod'
@@ -158,9 +152,9 @@ jobs:
       CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
       IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
      environment: production   # This enforces manual approval
-     #strategy:
-       #matrix:
-         #service: [microservice-one, microservice-two]
+     ###strategy:
+       ###matrix:
+         ###service: [microservice-one, microservice-two]
      steps:
        - name: Read image name
          id: read_image
@@ -231,7 +225,7 @@ jobs:
      needs: microservice-one-job-ci
      runs-on: ubuntu-latest
      env:
-      CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
+      ###CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
       IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
      environment: uat   # This enforces manual approval
      steps:
@@ -268,19 +262,19 @@ jobs:
       CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
       IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
      environment: production   # This enforces manual approval
-     #strategy:
-       #matrix:
-         #service: [microservice-one, microservice-two]
+     ###strategy:
+       ####matrix:
+         ###service: [microservice-one, microservice-two]
      steps:
-       #- name: Download image name artifact
-         #uses: actions/download-artifact@v4
-         #with:
-           #name: image-name-${{ matrix.service }}
-       #- name: Read image name
-         #id: read_image
-         #run: |
-            #IMAGE_NAME=$(cat image_name.txt)
-            #echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+       ###- name: Download image name artifact
+         ###uses: actions/download-artifact@v4
+         ###with:
+          ## #name: image-name-${{ matrix.service }}
+       ###- name: Read image name
+         ##id: read_image
+         ###run: |
+            ###IMAGE_NAME=$(cat image_name.txt)
+            ###echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
        - name: Docker pull
          run: |
            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
@@ -315,8 +309,8 @@ jobs:
       matrix:
         service: [microservice-one, microservice-two]
 
-    #outputs:
-      #service_changed-${{ matrix.service }}: ${{ steps.detect-changes.outputs.changed }}
+    ###outputs:
+      ###service_changed-${{ matrix.service }}: ${{ steps.detect-changes.outputs.changed }}
 
     steps:
       - name: Checkout Code
@@ -329,9 +323,9 @@ jobs:
           CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep "^${{ matrix.service }}/" || true)
           echo "changed=$CHANGED" >> $GITHUB_OUTPUT
 
-     # - name: Skip if no change in ${{ matrix.service }}
-       # if: steps.detect-changes.outputs.changed == ''
-        #run: echo "No changes in ${{ matrix.service }}"
+     # ##- name: Skip if no change in ${{ matrix.service }}
+       ### if: steps.detect-changes.outputs.changed == ''
+        ###run: echo "No changes in ${{ matrix.service }}"
 
       # SonarQube Scan
       #- name: SonarQube Scan
@@ -345,7 +339,7 @@ jobs:
 
       # Build Java with Maven in container
       - name: Build with Maven
-        if: steps.detect-changes.outputs.changed != ''
+        ##i#f: steps.detect-changes.outputs.changed != ''
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/app \
@@ -355,7 +349,7 @@ jobs:
 
       # Docker Build
       - name: Build Docker Image
-        if: steps.detect-changes.outputs.changed != ''
+        ###if: steps.detect-changes.outputs.changed != ''
         run: |
            IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:${{ github.ref_name }}-${{ github.run_id }}
            echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
@@ -389,16 +383,16 @@ jobs:
       
        # docker push image to dockerhub
       - name: Docker Push to docker hub Repository
-        if: steps.detect-changes.outputs.changed != ''
+        ##if: steps.detect-changes.outputs.changed != ''
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           docker push ${IMAGE_NAME}
       - name: Save image name
-        if: steps.detect-changes.outputs.changed != ''
+        ##if: steps.detect-changes.outputs.changed != ''
         run: echo "IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:${{ github.ref_name }}-${{ github.run_id }}" >> image_name.txt
 
       - name: Upload image name artifact
-        if: steps.detect-changes.outputs.changed != ''
+        ##if: steps.detect-changes.outputs.changed != ''
         uses: actions/upload-artifact@v4
         with:
           name: image-name-${{ matrix.service }}
