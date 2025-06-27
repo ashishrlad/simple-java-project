@@ -151,6 +151,7 @@ jobs:
          run: |
             git config --global user.name "ashishrlad"
             git config --global user.email "ashishrlad@gmail.com"
+            cd manifest-repo
             pwd 
             ls -lah
             cd manifest-repo/main/manifest-repo/
