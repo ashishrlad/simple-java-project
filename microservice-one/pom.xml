@@ -53,7 +53,7 @@
         </configuration>
       </plugin>
  
-   <!-- 👇 Jetty runner downloader -->
+    <!-- 👇 Jetty runner downloader -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>

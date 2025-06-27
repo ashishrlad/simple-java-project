@@ -260,9 +260,9 @@ jobs:
          service: [microservice-one, microservice-two]
      steps:
        - name: Download image name artifact
-         uses: actions/download-artifact@v3
+         uses: actions/download-artifact@v4
          with:
-           name: image-name-${{ matrix.service }}
+           name: image-name-microservice-one
        - name: Read image name
          id: read_image
          run: |
