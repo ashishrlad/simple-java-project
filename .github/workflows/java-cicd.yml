@@ -160,7 +160,7 @@ jobs:
             cat manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
        - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
          run: |
-           cd manifest-repo/main/manifest-repo
+           cd manifest-repo/microservice-one/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
