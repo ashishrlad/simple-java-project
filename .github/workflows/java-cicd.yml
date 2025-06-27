@@ -139,16 +139,16 @@ jobs:
         run: |
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           docker push ${IMAGE_NAME}
-      - name: Save image name
+      #- name: Save image name
         #if: steps.detect-changes.outputs.changed != ''
-        run: echo "IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:${{ github.ref_name }}-${{ github.run_id }}" >> image_name.txt
+        #run: echo "IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:${{ github.ref_name }}-${{ github.run_id }}" >> image_name.txt
 
-      - name: Upload image name artifact
+      #- name: Upload image name artifact
         #if: steps.detect-changes.outputs.changed != ''
-        uses: actions/upload-artifact@v4
-        with:
-          name: image-name-${{ matrix.service }}
-          path: image_name.txt
+        #uses: actions/upload-artifact@v4
+        #with:
+          #name: image-name-${{ matrix.service }}
+          #path: image_name.txt
    
   deploy-MS1-prod:
      if: github.ref == 'refs/heads/prod'
@@ -296,6 +296,8 @@ jobs:
          run: |
             git config --global user.name "ashishrlad"
             git config --global user.email "ashishrlad@gmail.com"
+            pwd
+            ls -lah
             sed -i "s|image:.*|image: ${IMAGE_NAME}|" manifest-repo/manifest-repo/${{ matrix.service }}/${{ matrix.service }}-deployment.yml
             cat manifest-repo/manifest-repo/${{ matrix.service }}/${{ matrix.service }}-deployment.yml
        - name: "Push Updated Image Tag for ${{ github.ref_name }} git branch" 
