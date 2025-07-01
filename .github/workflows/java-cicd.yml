@@ -489,4 +489,4 @@ jobs:
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
-           git push --set-upstream origin dev
+           git push origin ${{ github.ref_name }} --force
