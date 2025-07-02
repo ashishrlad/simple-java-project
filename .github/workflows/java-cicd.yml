@@ -133,18 +133,26 @@ jobs:
          continue-on-error: true
          run: |
           sleep 20
-          status=$(curl -s -o /dev/null -w "%{http_code}" https://www.googleasd.com)
+          status=$(curl -s -o /dev/null -w "%{http_code}" https://www.google.com)
           echo "HTTP status: $status"
           echo "status=$status" >> $GITHUB_OUTPUT
-       - name: Extract previous image from previous commit
+
+       - name: Extract previous image from prior commit
          if: steps.health.outputs.status != '200'
          working-directory: manifest-repo/microservice-one/manifest-repo/
          id: image_diff
          run: |
             echo "Extracting previous image from prior commit..."
-            OLD_IMAGE=$(git show HEAD^:manifest-repo/microservice-one/manifest-repo/microservice-one/dev/microservice-one-deployment.yml | grep 'image:' | sed 's/.*image: *//')
+            FILE_PATH=manifest-repo/microservice-one/dev/microservice-one-deployment.yml
+            echo "Checking if file existed in HEAD^..."
+            if git show HEAD^:"$FILE_PATH" > /dev/null 2>&1; then
+            OLD_IMAGE=$(git show HEAD^:"$FILE_PATH" | grep 'image:' | sed 's/.*image: *//')
             echo "Old image was: $OLD_IMAGE"
             echo "old_image=$OLD_IMAGE" >> $GITHUB_OUTPUT
+            else
+            echo "File not found in previous commit"
+            echo "old_image=" >> $GITHUB_OUTPUT
+            fi
 
        - name: Rollback Image Tag
          if: steps.health.outputs.status != '200'
