@@ -6,15 +6,22 @@ on:
     paths:
       - '**/microservice-one/**'
       - '**/microservice-two/**'
+  pull_request:
+    branches: [main, dev, uat, prod]
+    paths:
+      - '**/microservice-one/**'
+      - '**/microservice-two/**' 
   workflow_dispatch:
 
 env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   API_TOKEN_GITHUB: ${{ secrets.GH_PAT_DEST_REPO1 }}
-
 jobs:
   check_changes:
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: false
     outputs:
       microservice_one_changed: ${{ steps.detect.outputs.microservice_one_changed }}
       microservice_two_changed: ${{ steps.detect.outputs.microservice_two_changed }}
