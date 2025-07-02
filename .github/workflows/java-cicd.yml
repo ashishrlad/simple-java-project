@@ -116,7 +116,7 @@ jobs:
        - name: Read current image from manifest
          id: current_image
          run: |
-            CURRENT_IMAGE=$(grep -E '^\s*[-]?\s*image:' manifest-repo/microservice-one/manifest-repo/microservice-one/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | cut -d':' -f2- | xargs)
+            CURRENT_IMAGE=$(grep -E '^\s*[-]?\s*image:' manifest-repo/microservice-one/manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | cut -d':' -f2- | xargs)
             echo "CURRENT_IMAGE=$CURRENT_IMAGE"
             echo "CURRENT_IMAGE=$CURRENT_IMAGE" >> $GITHUB_ENV
             echo "current_image=$CURRENT_IMAGE" >> $GITHUB_OUTPUT
