@@ -137,19 +137,19 @@ jobs:
           echo "status=$status" >> $GITHUB_OUTPUT
        - name: Extract previous image from git diff
          id: image_diff
+         working-directory: manifest-repo/microservice-one/manifest-repo/
          run: |
-           git fetch origin ${{ github.ref_name }}
-           # Show diff against last committed state
-           OLD_IMAGE=$(git diff origin/${{ github.ref_name }} -- deployment.yml | grep '^-' | grep 'image:' | awk '{print $2}')
-           echo "Old image was: $OLD_IMAGE"
-           echo "old_image=$OLD_IMAGE" >> $GITHUB_OUTPUT
+            git fetch origin ${{ github.ref_name }}
+            OLD_IMAGE=$(git diff origin/${{ github.ref_name }} -- microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | grep '^-' | grep 'image:' | awk '{print $2}')
+            echo "Old image was: $OLD_IMAGE"
+            echo "old_image=$OLD_IMAGE" >> $GITHUB_OUTPUT
 
        - name: Rollback Image Tag
          if: steps.health.outputs.status != '200'
          run: |
             cd manifest-repo/microservice-one/manifest-repo/
             git checkout ${{ github.ref_name }}
-            sed -i "s|image:.*|image: ${OLD_IMAGE}|" microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
+            sed -i "s|image:.*|image: ${{ steps.image_diff.outputs.old_image }}|" microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
             cat microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
 
        - name: Push Rollback Image Tag
