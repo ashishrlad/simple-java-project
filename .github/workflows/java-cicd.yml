@@ -146,11 +146,14 @@ jobs:
              persist-credentials: true
        - name: "rollback Image Tag for ${{ github.ref_name }} git branch" 
          if: steps.health.outputs.status != '200'
-	 run: |
-            git config --global user.name "ashishrlad"
-            git config --global user.email "ashishrlad@gmail.com"
-	    old_image=$(git show HEAD^:manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | grep 'image:' | awk '{print $2}')
-            echo "Old image: $old_image"
+         run: |
+             git config --global user.name "ashishrlad"
+             git config --global user.email "ashishrlad@gmail.com"
+             old_image=$(git show HEAD^:manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | grep 'image:' | awk '{print $2}')
+             echo "old image0 = $old_image"
+             echo "OLD_IMAGE=$old_image" >> $GITHUB_ENV
+             echo "old image1 = $GITHUB_ENV"
+             echo "old image 2= $OLD_IMAGE"
 
        - name: Rollback Image Tag
          if: steps.health.outputs.status != '200'
