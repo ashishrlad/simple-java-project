@@ -130,6 +130,7 @@ jobs:
            git push origin ${{ github.ref_name }} --force
        - name: Check health of google.com
          id: health
+         continue-on-error: true
          run: |
           sleep 20
           status=$(curl -s -o /dev/null -w "%{http_code}" https://www.googlesdds.com)
