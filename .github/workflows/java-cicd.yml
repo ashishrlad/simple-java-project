@@ -137,30 +137,23 @@ jobs:
           echo "HTTP status: $status"
           echo "status=$status" >> $GITHUB_OUTPUT
 
-       - name: Checkout menifeast repository
-         uses: actions/checkout@v4
-         with:
-             repository: ashishrlad/config_repo_samplejava
-             token: ${{ secrets.GH_PAT_DEST_REPO1 }}
-             path: manifest-repo/microservice-one
-             persist-credentials: true
-
-       - name: "rollback Image Tag for ${{ github.ref_name }} git branch" 
-         if: steps.health.outputs.status != '200'
+       - name: Clone and extract previously deployed image
          id: get_old_image
          run: |
-           git clone https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
-           cd config_repo_samplejava
-           FILE_PATH=manifest-repo/microservice-one/manifest-repo/microservice-one/dev/microservice-one-deployment.yml
-           echo "Checking previous image from: $FILE_PATH"
-           if git show HEAD^:"$FILE_PATH" > /dev/null 2>&1; then
-           OLD_IMAGE=$(git show HEAD^:"$FILE_PATH" | grep 'image:' | sed 's/.*image: *//')
-           echo "Old image was: $OLD_IMAGE"
-           echo "OLD_IMAGE=$OLD_IMAGE" >> $GITHUB_ENV
-           else
-           echo "Previous version of file not found."
-           echo "OLD_IMAGE=" >> $GITHUB_ENV
-           fi
+            git clone --depth=1 https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
+            cd config_repo_samplejava
+            git fetch --unshallow
+            FILE_PATH=manifest-repo/microservice-one/manifest-repo/microservice-one/dev/microservice-one-deployment.yml
+            echo "Checking previous image from: $FILE_PATH"
+            COMMIT=$(git log -n 2 --pretty=format:%H -- "$FILE_PATH" | tail -1)
+            if [ -n "$COMMIT" ]; then
+            OLD_IMAGE=$(git show $COMMIT:"$FILE_PATH" | grep 'image:' | sed 's/.*image: *//')
+            echo "Old image was: $OLD_IMAGE"
+            echo "OLD_IMAGE=$OLD_IMAGE" >> $GITHUB_ENV
+            else
+            echo "No previous commit found for $FILE_PATH"
+            echo "OLD_IMAGE=" >> $GITHUB_ENV
+            fi
 
 
        - name: Rollback Image Tag
