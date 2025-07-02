@@ -139,9 +139,12 @@ jobs:
        - name: Extract previous image from git diff
          if: steps.health.outputs.status != '200'
          working-directory: manifest-repo/microservice-one/manifest-repo/
+         id: image_diff
          run: |
+            echo "Fetching previous state..."
             git fetch origin ${{ github.ref_name }}
-            OLD_IMAGE=$(git diff origin/${{ github.ref_name }} -- microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | grep '^-' | grep 'image:' | awk '{print $2}')
+            echo "Checking git diff..."
+            OLD_IMAGE=$(git diff origin/${{ github.ref_name }} -- microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | grep '^-' | grep 'image:' | sed 's/- *image: *//')
             echo "Old image was: $OLD_IMAGE"
             echo "old_image=$OLD_IMAGE" >> $GITHUB_OUTPUT
 
