@@ -133,22 +133,24 @@ jobs:
          continue-on-error: true
          run: |
           sleep 20
-          status=$(curl -s -o /dev/null -w "%{http_code}" https://www.googledfg.com)
+          status=$(curl -s -o /dev/null -w "%{http_code}" https://www.google.com)
           echo "HTTP status: $status"
           echo "status=$status" >> $GITHUB_OUTPUT
 
-       - name: Extract previously deployed image
+       - name: Checkout menifeast repository
+         uses: actions/checkout@v4
+         with:
+             repository: ashishrlad/config_repo_samplejava
+             token: ${{ secrets.GH_PAT_DEST_REPO1 }}
+             path: manifest-repo/microservice-one
+             persist-credentials: true
+       - name: "rollback Image Tag for ${{ github.ref_name }} git branch" 
          if: steps.health.outputs.status != '200'
-         working-directory: manifest-repo/microservice-one/manifest-repo/
-         id: image_diff
-         run: |
-            echo "Finding last changed image..."
-            FILE_PATH=manifest-repo/microservice-one/dev/microservice-one-deployment.yml
-            cd ../..
-            OLD_IMAGE=$(git log -L '/image:/':$FILE_PATH -n 2 --pretty= | grep 'image:' | tail -1 | sed 's/.*image: *//')
-            echo "Old image was: $OLD_IMAGE"
-            echo "old_image=$OLD_IMAGE" >> $GITHUB_OUTPUT
-
+	 run: |
+            git config --global user.name "ashishrlad"
+            git config --global user.email "ashishrlad@gmail.com"
+	    old_image=$(git show HEAD^:manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | grep 'image:' | awk '{print $2}')
+            echo "Old image: $old_image"
 
        - name: Rollback Image Tag
          if: steps.health.outputs.status != '200'
