@@ -149,7 +149,7 @@ jobs:
          if: steps.health.outputs.status != '200'
          id: get_old_image
          run: |
-             git clone https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
+             git clone --depth=0 https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
              FILE_PATH=manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
              cd config_repo_samplejava
              echo "Checking previous image from: $FILE_PATH"
