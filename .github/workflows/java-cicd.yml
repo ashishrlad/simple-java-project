@@ -133,20 +133,18 @@ jobs:
          continue-on-error: true
          run: |
           sleep 20
-          status=$(curl -s -o /dev/null -w "%{http_code}" https://www.googlesfsss.com)
+          status=$(curl -s -o /dev/null -w "%{http_code}" https://www.google.com)
           echo "HTTP status: $status"
           echo "status=$status" >> $GITHUB_OUTPUT
-       - name: Extract previous image from git diff
+       - name: Extract previous image from previous commit
          if: steps.health.outputs.status != '200'
          working-directory: manifest-repo/microservice-one/manifest-repo/
          id: image_diff
          run: |
-            echo "Fetching previous state..."
-            git fetch origin ${{ github.ref_name }}
-            echo "Checking git diff..."
-            OLD_IMAGE=$(git diff origin/${{ github.ref_name }} -- microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | grep '^-' | grep 'image:' | sed 's/- *image: *//')
-            echo "Old image was: $OLD_IMAGE"
-            echo "old_image=$OLD_IMAGE" >> $GITHUB_OUTPUT
+           echo "Extracting previous image from prior commit..."
+           OLD_IMAGE=$(git show HEAD^:microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | grep 'image:' | sed 's/.*image: *//')
+           echo "Old image was: $OLD_IMAGE"
+           echo "old_image=$OLD_IMAGE" >> $GITHUB_OUTPUT
 
        - name: Rollback Image Tag
          if: steps.health.outputs.status != '200'
