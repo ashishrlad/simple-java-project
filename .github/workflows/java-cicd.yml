@@ -2,7 +2,7 @@ name: Java CI Pipeline multiple java service per repo
 
 on:
   push:
-    branches: [main, dev, stage, prod]
+    branches: [main, dev, uat, prod]
     paths:
       - '**/microservice-one/**'
       - '**/microservice-two/**'
@@ -11,7 +11,6 @@ on:
 env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   API_TOKEN_GITHUB: ${{ secrets.GH_PAT_DEST_REPO1 }}
-
 jobs:
   check_changes:
     runs-on: ubuntu-latest
@@ -157,10 +156,11 @@ jobs:
          run: |
            cd manifest-repo/microservice-one/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
+           git checkout -b ${{ github.ref_name }}
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
-           git push origin main
+           git push origin ${{ github.ref_name }} --force
 
   deploy-MS1-prod:
      if: github.ref == 'refs/heads/prod'
@@ -192,10 +192,11 @@ jobs:
          run: |
            cd manifest-repo/microservice-one/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
+           git checkout -b ${{ github.ref_name }}
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
-           git push origin prod
+           git push origin ${{ github.ref_name }} --force
 
   deploy-MS1-uat:
      if: github.ref == 'refs/heads/uat'
@@ -227,10 +228,11 @@ jobs:
          run: |
            cd manifest-repo/microservice-one/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
+           git checkout -b ${{ github.ref_name }}
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
-           git push origin uat
+           git push origin ${{ github.ref_name }} --force
 
   deploy-MS1-dev:
      if: github.ref == 'refs/heads/dev'
@@ -262,10 +264,11 @@ jobs:
          run: |
            cd manifest-repo/microservice-one/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
+           git checkout -b ${{ github.ref_name }}
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
-           git push origin dev
+           git push origin ${{ github.ref_name }} --force
 
   microservice-two-job-ci:
     needs: check_changes
@@ -380,10 +383,11 @@ jobs:
          run: |
            cd manifest-repo/microservice-two/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
+           git checkout -b ${{ github.ref_name }}
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
-           git push origin main
+           git push origin ${{ github.ref_name }} --force
 
   deploy-MS2-prod:
      if: github.ref == 'refs/heads/prod'
@@ -415,10 +419,11 @@ jobs:
          run: |
            cd manifest-repo/microservice-two/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
+           git checkout -b ${{ github.ref_name }}
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
-           git push origin prod
+           git push origin ${{ github.ref_name }} --force
 
   deploy-MS2-uat:
      if: github.ref == 'refs/heads/uat'
@@ -450,10 +455,11 @@ jobs:
          run: |
            cd manifest-repo/microservice-two/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
+           git checkout -b ${{ github.ref_name }}
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
-           git push origin uat
+           git push origin ${{ github.ref_name }} --force
 
   deploy-MS2-dev:
      if: github.ref == 'refs/heads/dev'
