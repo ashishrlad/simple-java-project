@@ -141,7 +141,7 @@ jobs:
          continue-on-error: true
          run: |
           sleep 20
-          status=$(curl -s -o /dev/null -w "%{http_code}" https://www.google.com)
+          status=$(curl -s -o /dev/null -w "%{http_code}" https://www.googleer.com)
           echo "HTTP status: $status"
           echo "status=$status" >> $GITHUB_OUTPUT
 
