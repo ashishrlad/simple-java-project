@@ -116,7 +116,7 @@ jobs:
        - name: Read current image from manifest
          id: current_image
          run: |
-            CURRENT_IMAGE=$(grep -E '^\s*image:' manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | awk '{print $2}')
+            CURRENT_IMAGE=$(grep -E '^\s*[-]?\s*image:' manifest-repo/microservice-one/manifest-repo/microservice-one/dev/microservice-one-deployment.yml | awk -F'image: ' '{print $2}' | xargs)
             echo "CURRENT_IMAGE=$CURRENT_IMAGE"
             echo "CURRENT_IMAGE=$CURRENT_IMAGE" >> $GITHUB_ENV
             echo "current_image=$CURRENT_IMAGE" >> $GITHUB_OUTPUT
@@ -141,7 +141,7 @@ jobs:
          continue-on-error: true
          run: |
           sleep 20
-          status=$(curl -s -o /dev/null -w "%{http_code}" https://www.googledfg.com)
+          status=$(curl -s -o /dev/null -w "%{http_code}" https://www.google.com)
           echo "HTTP status: $status"
           echo "status=$status" >> $GITHUB_OUTPUT
 
