@@ -131,12 +131,12 @@ jobs:
        - name: Check health of google.com
          id: health
          run: |
-          sleep 60
+          sleep 20
           status=$(curl -s -o /dev/null -w "%{http_code}" https://www.googlesdds.com)
           echo "HTTP status: $status"
           echo "status=$status" >> $GITHUB_OUTPUT
        - name: Extract previous image from git diff
-         id: image_diff
+         if: steps.health.outputs.status != '200'
          working-directory: manifest-repo/microservice-one/manifest-repo/
          run: |
             git fetch origin ${{ github.ref_name }}
@@ -149,7 +149,7 @@ jobs:
          run: |
             cd manifest-repo/microservice-one/manifest-repo/
             git checkout ${{ github.ref_name }}
-            sed -i "s|image:.*|image: ${{ steps.image_diff.outputs.old_image }}|" microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
+            sed -i "s|image:.*|image: ${OLD_IMAGE}|" microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
             cat microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
 
        - name: Push Rollback Image Tag
