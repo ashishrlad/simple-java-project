@@ -133,7 +133,7 @@ jobs:
          run: |
             echo "Waiting for 1 minute to allow deployment to stabilize..."
             sleep 20
-            URL="https://googleasfd.com/healthz"
+            URL="https://google.com/healthz"
             STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 "$URL" || echo "000")
             echo "HTTP Status: $STATUS"
             if [ "$STATUS" != "200" ]; then
