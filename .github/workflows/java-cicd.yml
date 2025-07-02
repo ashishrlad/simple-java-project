@@ -141,10 +141,10 @@ jobs:
          working-directory: manifest-repo/microservice-one/manifest-repo/
          id: image_diff
          run: |
-           echo "Extracting previous image from prior commit..."
-           OLD_IMAGE=$(git show HEAD^:microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | grep 'image:' | sed 's/.*image: *//')
-           echo "Old image was: $OLD_IMAGE"
-           echo "old_image=$OLD_IMAGE" >> $GITHUB_OUTPUT
+            echo "Extracting previous image from prior commit..."
+            OLD_IMAGE=$(git show HEAD^:manifest-repo/microservice-one/manifest-repo/microservice-one/dev/microservice-one-deployment.yml | grep 'image:' | sed 's/.*image: *//')
+            echo "Old image was: $OLD_IMAGE"
+            echo "old_image=$OLD_IMAGE" >> $GITHUB_OUTPUT
 
        - name: Rollback Image Tag
          if: steps.health.outputs.status != '200'
