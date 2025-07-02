@@ -143,8 +143,8 @@ jobs:
              echo "Application is healthy."
              echo "rollback=false" >> $GITHUB_ENV
              fi
-             outputs:
-               rollback: ${{ env.rollback }}
+         outputs:
+             rollback: ${{ env.rollback }}
        - name: "rollback Image Tag for ${{ github.ref_name }} git branch" 
          if: steps.health_check.outputs.rollback == 'true'
          run: |
