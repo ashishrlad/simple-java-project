@@ -6,6 +6,11 @@ on:
     paths:
       - '**/microservice-one/**'
       - '**/microservice-two/**'
+  ppull_request:
+    branches: [main, dev, uat, prod]
+    paths:
+      - '**/microservice-one/**'
+      - '**/microservice-two/**' 
   workflow_dispatch:
 
 env:
@@ -14,6 +19,9 @@ env:
 jobs:
   check_changes:
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: false
     outputs:
       microservice_one_changed: ${{ steps.detect.outputs.microservice_one_changed }}
       microservice_two_changed: ${{ steps.detect.outputs.microservice_two_changed }}
