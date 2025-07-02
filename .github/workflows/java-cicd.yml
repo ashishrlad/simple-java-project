@@ -131,40 +131,51 @@ jobs:
        - name: Check Deployment Health
          id: health_check
          run: |
-              echo "Waiting for 1 minute to allow deployment to stabilize..."
-              sleep 20
-              URL="https://googleasfd.com/healthz"
-              STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 "$URL" || echo "000")
-              echo "HTTP Status: $STATUS"
-              if [ "$STATUS" != "200" ]; then
-               echo "Deployment failed. Initiating rollback..."
-               echo "rollback=true" >> "$GITHUB_ENV"
-               echo "::set-output name=rollback::true"
-              else
-               echo "Application is healthy."
-               echo "rollback=false" >> "$GITHUB_ENV"
-               echo "::set-output name=rollback::false"
-              fi
-       - name: "rollback Image Tag for ${{ github.ref_name }} git branch" 
+            echo "Waiting for 1 minute to allow deployment to stabilize..."
+            sleep 20
+            URL="https://googleasfd.com/healthz"
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 "$URL" || echo "000")
+            echo "HTTP Status: $STATUS"
+            if [ "$STATUS" != "200" ]; then
+              echo "Deployment failed. Initiating rollback..."
+              echo "rollback=true" >> "$GITHUB_ENV"
+              echo "::set-output name=rollback::true"
+            else
+             echo "Application is healthy."
+             echo "rollback=false" >> "$GITHUB_ENV"
+             echo "::set-output name=rollback::false"
+            fi
+       - name: Get Previous Image Tag (from last commit)
+         id: get_previous_image
          if: steps.health_check.outputs.rollback == 'true'
          run: |
-                git config --global user.name "ashishrlad"
-                git config --global user.email "ashishrlad@gmail.com"
-                cd manifest-repo/microservice-one/manifest-repo/
-                git checkout ${{ github.ref_name }}
-                git log -2 --pretty=format:"%h" > last_two_commits.txt
-                PREVIOUS_COMMIT=$(sed -n 2p last_two_commits.txt)
-                git checkout $PREVIOUS_COMMIT
-                PREVIOUS_TAG=$(grep "image:" microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | awk -F": " '{print $2}')
-                sed -i "s|image:.*|image: ${PREVIOUS_TAG}|" microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
-                cat microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
-       - name: "Push rollback Image Tag for ${{ github.ref_name }} git branch" 
+           git config --global user.name "ashishrlad"
+           git config --global user.email "ashishrlad@gmail.com"
+           cd manifest-repo/microservice-one/manifest-repo/
+           git checkout ${{ github.ref_name }}
+           git log -2 --pretty=format:"%H" > last_two_commits.txt
+           PREVIOUS_COMMIT=$(sed -n 2p last_two_commits.txt)
+           echo "Previous commit hash: $PREVIOUS_COMMIT"
+           git checkout $PREVIOUS_COMMIT
+           IMAGE_TAG=$(grep "image:" microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | awk -F': ' '{print $2}')
+           echo "Previous image tag: $IMAGE_TAG"
+           echo "PREVIOUS_TAG=$IMAGE_TAG" >> "$GITHUB_ENV"
+           echo "::set-output name=tag::$IMAGE_TAG"
+
+       - name: Rollback Image Tag
          if: steps.health_check.outputs.rollback == 'true'
          run: |
-               cd manifest-repo/microservice-one/manifest-repo/
-               git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
-               git checkout ${{ github.ref_name }} || git checkout -b ${{ github.ref_name }} 
-               git config --global init.defaultBranch ${{ github.ref_name }}
-               git add . 
-               git commit -m "Updated rollback image tag ${PREVIOUS_TAG} in ${{ github.ref_name }} manifeastfile"
-               git push origin ${{ github.ref_name }} --force
+            cd manifest-repo/microservice-one/manifest-repo/
+            git checkout ${{ github.ref_name }}
+            sed -i "s|image:.*|image: ${PREVIOUS_TAG}|" microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
+            cat microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
+
+       - name: Push Rollback Image Tag
+         if: steps.health_check.outputs.rollback == 'true'
+         run: |
+             cd manifest-repo/microservice-one/manifest-repo/
+             git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
+             git checkout ${{ github.ref_name }}
+             git add .
+             git commit -m "Rollback: Reverted image tag to ${PREVIOUS_TAG} due to failed health check"
+             git push origin ${{ github.ref_name }} --force
