@@ -132,8 +132,8 @@ jobs:
          id: health_check
          run: |
               echo "Waiting for 5 minutes to allow deployment to stabilize..."
-              sleep 300
-              STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://google.com/healthz)
+              sleep 60
+              STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://gjsjshsgoogle.com/healthz)
               echo "HTTP Status: $STATUS"
               if [ "$STATUS" != "200" ]; then
               echo "Deployment failed. Initiating rollback..."
