@@ -2,7 +2,7 @@ name: Java CI Pipeline multiple java service per repo
 
 on:
   push:
-    branches: [main, dev, stage, prod]
+    branches: [main, dev, uat, prod]
     paths:
       - '**/microservice-one/**'
       - '**/microservice-two/**'
