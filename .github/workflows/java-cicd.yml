@@ -109,10 +109,12 @@ jobs:
        - name: Checkout menifeast repository
          uses: actions/checkout@v4
          with:
-             repository: ashishrlad/config_repo_samplejava
-             token: ${{ secrets.GH_PAT_DEST_REPO1 }}
-             path: manifest-repo/microservice-one
-             persist-credentials: true
+            repository: ashishrlad/config_repo_samplejava
+            ref: ${{ github.ref_name }}  # Or explicitly like 'dev', 'uat', etc.
+            token: ${{ secrets.GH_PAT_DEST_REPO1 }}
+            path: manifest-repo/microservice-one
+            persist-credentials: true
+
        - name: Read current image from manifest
          id: current_image
          run: |
