@@ -116,10 +116,11 @@ jobs:
        - name: Read current image from manifest
          id: current_image
          run: |
-           CURRENT_IMAGE=$(grep "image:" manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | awk '{print $1}')
-           echo "CURRENT_IMAGE=$CURRENT_IMAGE"
-           echo "CURRENT_IMAGE=$CURRENT_IMAGE" >> $GITHUB_ENV
-           echo "current_image=$CURRENT_IMAGE" >> $GITHUB_OUTPUT
+            CURRENT_IMAGE=$(grep -E '^\s*image:' manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | awk '{print $2}')
+            echo "CURRENT_IMAGE=$CURRENT_IMAGE"
+            echo "CURRENT_IMAGE=$CURRENT_IMAGE" >> $GITHUB_ENV
+            echo "current_image=$CURRENT_IMAGE" >> $GITHUB_OUTPUT
+       
        - name: "Updated Image Tag for ${{ github.ref_name }} git branch" 
          run: |
             git config --global user.name "ashishrlad"
