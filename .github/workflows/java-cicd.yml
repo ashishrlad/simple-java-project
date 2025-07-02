@@ -100,7 +100,7 @@ jobs:
      env:
       CHANGED_FOLDER: ${{ needs.check_changes.outputs.changed_folder }}
       IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/microservice-one:${{ github.ref_name }}-${{ github.run_id }}
-     environment: production   # This enforces manual approval
+     environment: production   # This enforces manual approvala
      steps:
        - name: Docker pull
          run: |
