@@ -144,16 +144,24 @@ jobs:
              token: ${{ secrets.GH_PAT_DEST_REPO1 }}
              path: manifest-repo/microservice-one
              persist-credentials: true
+
        - name: "rollback Image Tag for ${{ github.ref_name }} git branch" 
          if: steps.health.outputs.status != '200'
+         id: get_old_image
          run: |
-             git config --global user.name "ashishrlad"
-             git config --global user.email "ashishrlad@gmail.com"
-             old_image=$(git show HEAD^:manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml | grep 'image:' | awk '{print $2}')
-             echo "old image0 = $old_image"
-             echo "OLD_IMAGE=$old_image" >> $GITHUB_ENV
-             echo "old image1 = $GITHUB_ENV"
-             echo "old image 2= $OLD_IMAGE"
+             git clone https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
+             FILE_PATH=manifest-repo/microservice-one/manifest-repo/microservice-one/${{ github.ref_name }}/microservice-one-deployment.yml
+             cd config_repo_samplejava
+             echo "Checking previous image from: $FILE_PATH"
+             if git show HEAD^:"$FILE_PATH" > /dev/null 2>&1; then
+             OLD_IMAGE=$(git show HEAD^:"$FILE_PATH" | grep 'image:' | sed 's/.*image: *//')
+             echo "Old image was: $OLD_IMAGE"
+             echo "OLD_IMAGE=$OLD_IMAGE" >> $GITHUB_ENV
+             else
+             echo "Previous version of file not found."
+             echo "OLD_IMAGE=" >> $GITHUB_ENV
+             fi
+
 
        - name: Rollback Image Tag
          if: steps.health.outputs.status != '200'
