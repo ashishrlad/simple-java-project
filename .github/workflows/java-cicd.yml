@@ -132,7 +132,7 @@ jobs:
          id: health
          run: |
           sleep 60
-          status=$(curl -s -o /dev/null -w "%{http_code}" https://www.google.com)
+          status=$(curl -s -o /dev/null -w "%{http_code}" https://www.googlesdds.com)
           echo "HTTP status: $status"
           echo "status=$status" >> $GITHUB_OUTPUT
        - name: Extract previous image from git diff
