@@ -131,20 +131,20 @@ jobs:
        - name: Check Deployment Health
          id: health_check
          run: |
-             echo "Waiting for 1 minute to allow deployment to stabilize..."
-             sleep 30
-             URL="https://googleasfd.com/healthz"
-             STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 "$URL" || echo "000")
-             echo "HTTP Status: $STATUS"
-             if [ "$STATUS" != "200" ]; then
-             echo "Deployment failed. Initiating rollback..."
-             echo "rollback=true" >> $GITHUB_ENV
-             else
-             echo "Application is healthy."
-             echo "rollback=false" >> $GITHUB_ENV
-             fi
-         outputs:
-             rollback: ${{ env.rollback }}
+              echo "Waiting for 1 minute to allow deployment to stabilize..."
+              sleep 20
+              URL="https://googleasfd.com/healthz"
+              STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 "$URL" || echo "000")
+              echo "HTTP Status: $STATUS"
+              if [ "$STATUS" != "200" ]; then
+               echo "Deployment failed. Initiating rollback..."
+               echo "rollback=true" >> "$GITHUB_ENV"
+               echo "::set-output name=rollback::true"
+              else
+               echo "Application is healthy."
+               echo "rollback=false" >> "$GITHUB_ENV"
+               echo "::set-output name=rollback::false"
+              fi
        - name: "rollback Image Tag for ${{ github.ref_name }} git branch" 
          if: steps.health_check.outputs.rollback == 'true'
          run: |
