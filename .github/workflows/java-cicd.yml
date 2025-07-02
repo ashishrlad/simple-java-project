@@ -130,11 +130,11 @@ jobs:
            git push origin ${{ github.ref_name }} --force
        - name: Check health of google.com
          id: health
-	 run: |
-	    sleep 60
-            status=$(curl -s -o /dev/null -w "%{http_code}" https://www.google.com)
-            echo "HTTP status: $status"
-            echo "status=$status" >> $GITHUB_OUTPUT
+         run: |
+          sleep 60
+          status=$(curl -s -o /dev/null -w "%{http_code}" https://www.google.com)
+          echo "HTTP status: $status"
+          echo "status=$status" >> $GITHUB_OUTPUT
        - name: Extract previous image from git diff
          id: image_diff
          run: |
