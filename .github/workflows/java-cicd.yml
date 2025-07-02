@@ -6,7 +6,7 @@ on:
     paths:
       - '**/microservice-one/**'
       - '**/microservice-two/**'
-  ppull_request:
+  pull_request:
     branches: [main, dev, uat, prod]
     paths:
       - '**/microservice-one/**'
