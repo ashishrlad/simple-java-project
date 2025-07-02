@@ -140,7 +140,7 @@ jobs:
          run: |
            git fetch origin ${{ github.ref_name }}
            # Show diff against last committed state
-           OLD_IMAGE=$(git diff origin/main -- deployment.yml | grep '^-' | grep 'image:' | awk '{print $2}')
+           OLD_IMAGE=$(git diff origin/${{ github.ref_name }} -- deployment.yml | grep '^-' | grep 'image:' | awk '{print $2}')
            echo "Old image was: $OLD_IMAGE"
            echo "old_image=$OLD_IMAGE" >> $GITHUB_OUTPUT
 
