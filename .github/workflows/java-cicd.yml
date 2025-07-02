@@ -229,7 +229,7 @@ jobs:
          run: |
            cd manifest-repo/microservice-one/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
-           #git checkout -b ${{ github.ref_name }}
+           git checkout -b ${{ github.ref_name }}
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
@@ -265,7 +265,7 @@ jobs:
          run: |
            cd manifest-repo/microservice-one/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
-           #git checkout -b ${{ github.ref_name }}
+           git checkout -b ${{ github.ref_name }}
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
@@ -384,7 +384,7 @@ jobs:
          run: |
            cd manifest-repo/microservice-two/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
-           #git checkout -b ${{ github.ref_name }}
+           git checkout -b ${{ github.ref_name }}
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
@@ -420,7 +420,7 @@ jobs:
          run: |
            cd manifest-repo/microservice-two/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
-           #git checkout -b ${{ github.ref_name }}
+           git checkout -b ${{ github.ref_name }}
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
@@ -456,7 +456,7 @@ jobs:
          run: |
            cd manifest-repo/microservice-two/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
-           #git checkout -b ${{ github.ref_name }}
+           git checkout -b ${{ github.ref_name }}
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
@@ -492,7 +492,7 @@ jobs:
          run: |
            cd manifest-repo/microservice-two/manifest-repo/
            git remote set-url origin https://x-access-token:${{ secrets.GH_PAT_DEST_REPO1 }}@github.com/ashishrlad/config_repo_samplejava.git
-           #git checkout -b ${{ github.ref_name }}
+           git checkout -b ${{ github.ref_name }}
            git config --global init.defaultBranch ${{ github.ref_name }}
            git add . 
            git commit -m "Updated image tag in ${{ github.ref_name }} manifeastfile"
