@@ -133,7 +133,7 @@ jobs:
          continue-on-error: true
          run: |
           sleep 20
-          status=$(curl -s -o /dev/null -w "%{http_code}" https://www.googlesdfg.com)
+          status=$(curl -s -o /dev/null -w "%{http_code}" https://www.google.com)
           echo "HTTP status: $status"
           echo "status=$status" >> $GITHUB_OUTPUT
 
@@ -144,9 +144,11 @@ jobs:
          run: |
             echo "Finding last changed image..."
             FILE_PATH=manifest-repo/microservice-one/dev/microservice-one-deployment.yml
-            OLD_IMAGE=$(git log -L '/image:/':$FILE_PATH -n 2 | grep 'image:' | tail -1 | sed 's/.*image: *//')
+            cd ../..
+            OLD_IMAGE=$(git log -L '/image:/':$FILE_PATH -n 2 --pretty= | grep 'image:' | tail -1 | sed 's/.*image: *//')
             echo "Old image was: $OLD_IMAGE"
             echo "old_image=$OLD_IMAGE" >> $GITHUB_OUTPUT
+
 
        - name: Rollback Image Tag
          if: steps.health.outputs.status != '200'
